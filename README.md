@@ -1,5 +1,7 @@
 # 🐍➡️📘 Python-to-TypeScript Porting MCP Server
 
+[![smithery badge](https://smithery.ai/badge/@glassBead-tc/python-to-typescript-assistant)](https://smithery.ai/server/@glassBead-tc/python-to-typescript-assistant)
+
 A comprehensive Model Context Protocol (MCP) server that provides systematic tools and references for porting Python code to TypeScript. This server combines **model enhancement capabilities** with practical porting resources to address the challenges identified in Python-to-TypeScript migration projects.
 
 ## 🎯 Purpose
@@ -82,6 +84,14 @@ Then configure your MCP client (like Claude Desktop) to use the server:
 2. **`review-typescript-conversion`** - Generate prompts for reviewing converted code
 
 ## 📦 Installation
+
+### Installing via Smithery
+
+To install python-to-typescript-assistant for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@glassBead-tc/python-to-typescript-assistant):
+
+```bash
+npx -y @smithery/cli install @glassBead-tc/python-to-typescript-assistant --client claude
+```
 
 ### Prerequisites
 
