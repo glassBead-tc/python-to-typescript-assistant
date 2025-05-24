@@ -1,0 +1,35 @@
+# Source files (users need the built dist/ folder)
+src/
+*.ts
+!*.d.ts
+tsconfig.json
+
+# Development files
+.git/
+.gitignore
+.vscode/
+*.log
+npm-debug.log*
+.DS_Store
+
+# Documentation that's not needed for npm users
+mcp-server-dev-guide.md
+py-to-ts-research.md
+EPHEMERAL_JOURNALS.md
+
+# Test files
+test/
+tests/
+*.test.js
+*.test.ts
+coverage/
+
+# Development dependencies
+node_modules/
+
+# Examples are useful for users, so keep them
+# examples/
+
+# Lock files (let users manage their own)
+package-lock.json
+yarn.lock 
