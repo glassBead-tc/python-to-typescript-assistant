@@ -1,0 +1,406 @@
+{
+  "builtins": {
+    "len": {
+      "js_equivalent": "array.length / object.size / string.length",
+      "notes": ["Different properties for different types"],
+      "examples": [
+        {"python": "len(my_list)", "typescript": "myList.length"},
+        {"python": "len(my_string)", "typescript": "myString.length"},
+        {"python": "len(my_set)", "typescript": "mySet.size"}
+      ]
+    },
+    "range": {
+      "js_equivalent": "Array.from({length: n}, (_, i) => i)",
+      "notes": ["No built-in range, use Array.from or generators"],
+      "examples": [
+        {"python": "range(5)", "typescript": "Array.from({length: 5}, (_, i) => i)"},
+        {"python": "range(1, 6)", "typescript": "Array.from({length: 5}, (_, i) => i + 1)"}
+      ]
+    },
+    "enumerate": {
+      "js_equivalent": "array.map((item, index) => [index, item])",
+      "notes": ["Use map with index parameter"],
+      "examples": [
+        {"python": "enumerate(items)", "typescript": "items.map((item, index) => [index, item])"}
+      ]
+    },
+    "zip": {
+      "js_equivalent": "arrays[0].map((_, i) => arrays.map(arr => arr[i]))",
+      "notes": ["Custom implementation needed for multiple arrays"],
+      "examples": [
+        {"python": "zip(a, b)", "typescript": "a.map((item, i) => [item, b[i]])"}
+      ]
+    },
+    "map": {
+      "js_equivalent": "array.map()",
+      "notes": ["Direct equivalent for arrays"],
+      "examples": [
+        {"python": "map(func, items)", "typescript": "items.map(func)"}
+      ]
+    },
+    "filter": {
+      "js_equivalent": "array.filter()",
+      "notes": ["Direct equivalent"],
+      "examples": [
+        {"python": "filter(predicate, items)", "typescript": "items.filter(predicate)"}
+      ]
+    },
+    "reduce": {
+      "js_equivalent": "array.reduce()",
+      "notes": ["Available as array method"],
+      "examples": [
+        {"python": "reduce(func, items, initial)", "typescript": "items.reduce(func, initial)"}
+      ]
+    },
+    "sum": {
+      "js_equivalent": "array.reduce((a, b) => a + b, 0)",
+      "notes": ["Use reduce for summation"],
+      "examples": [
+        {"python": "sum(numbers)", "typescript": "numbers.reduce((a, b) => a + b, 0)"}
+      ]
+    },
+    "min": {
+      "js_equivalent": "Math.min(...array)",
+      "notes": ["Use Math.min with spread operator"],
+      "examples": [
+        {"python": "min(numbers)", "typescript": "Math.min(...numbers)"}
+      ]
+    },
+    "max": {
+      "js_equivalent": "Math.max(...array)",
+      "notes": ["Use Math.max with spread operator"],
+      "examples": [
+        {"python": "max(numbers)", "typescript": "Math.max(...numbers)"}
+      ]
+    },
+    "abs": {
+      "js_equivalent": "Math.abs()",
+      "notes": ["Direct equivalent"],
+      "examples": [
+        {"python": "abs(x)", "typescript": "Math.abs(x)"}
+      ]
+    },
+    "round": {
+      "js_equivalent": "Math.round()",
+      "notes": ["Similar behavior"],
+      "examples": [
+        {"python": "round(x)", "typescript": "Math.round(x)"}
+      ]
+    },
+    "int": {
+      "js_equivalent": "parseInt() / Math.floor() / Math.trunc()",
+      "notes": ["Different conversion semantics"],
+      "examples": [
+        {"python": "int('123')", "typescript": "parseInt('123', 10)"},
+        {"python": "int(3.7)", "typescript": "Math.trunc(3.7)"}
+      ]
+    },
+    "float": {
+      "js_equivalent": "parseFloat() / Number()",
+      "notes": ["Use parseFloat for strings, Number for general conversion"],
+      "examples": [
+        {"python": "float('3.14')", "typescript": "parseFloat('3.14')"},
+        {"python": "float(x)", "typescript": "Number(x)"}
+      ]
+    },
+    "str": {
+      "js_equivalent": "String() / .toString()",
+      "notes": ["String constructor or toString method"],
+      "examples": [
+        {"python": "str(123)", "typescript": "String(123)"},
+        {"python": "str(obj)", "typescript": "obj.toString()"}
+      ]
+    },
+    "bool": {
+      "js_equivalent": "Boolean() / !!",
+      "notes": ["Boolean constructor or double negation"],
+      "examples": [
+        {"python": "bool(x)", "typescript": "Boolean(x)"},
+        {"python": "bool(x)", "typescript": "!!x"}
+      ]
+    },
+    "type": {
+      "js_equivalent": "typeof / instanceof",
+      "notes": ["Different type checking mechanisms"],
+      "examples": [
+        {"python": "type(x)", "typescript": "typeof x"},
+        {"python": "type(x) is list", "typescript": "Array.isArray(x)"}
+      ]
+    },
+    "isinstance": {
+      "js_equivalent": "instanceof / typeof / Array.isArray()",
+      "notes": ["Multiple mechanisms for type checking"],
+      "examples": [
+        {"python": "isinstance(x, str)", "typescript": "typeof x === 'string'"},
+        {"python": "isinstance(x, list)", "typescript": "Array.isArray(x)"}
+      ]
+    }
+  },
+  "os": {
+    "path": {
+      "js_equivalent": "path module (Node.js)",
+      "package": "path",
+      "examples": [
+        {"python": "os.path.join(a, b)", "typescript": "path.join(a, b)"},
+        {"python": "os.path.dirname(p)", "typescript": "path.dirname(p)"},
+        {"python": "os.path.basename(p)", "typescript": "path.basename(p)"},
+        {"python": "os.path.exists(p)", "typescript": "fs.existsSync(p)"}
+      ]
+    },
+    "environ": {
+      "js_equivalent": "process.env",
+      "examples": [
+        {"python": "os.environ['PATH']", "typescript": "process.env.PATH"},
+        {"python": "os.environ.get('VAR', 'default')", "typescript": "process.env.VAR ?? 'default'"}
+      ]
+    },
+    "getcwd": {
+      "js_equivalent": "process.cwd()",
+      "examples": [
+        {"python": "os.getcwd()", "typescript": "process.cwd()"}
+      ]
+    }
+  },
+  "sys": {
+    "argv": {
+      "js_equivalent": "process.argv",
+      "notes": ["process.argv includes node and script name"],
+      "examples": [
+        {"python": "sys.argv", "typescript": "process.argv.slice(2)"}
+      ]
+    },
+    "exit": {
+      "js_equivalent": "process.exit()",
+      "examples": [
+        {"python": "sys.exit(1)", "typescript": "process.exit(1)"}
+      ]
+    },
+    "platform": {
+      "js_equivalent": "process.platform",
+      "examples": [
+        {"python": "sys.platform", "typescript": "process.platform"}
+      ]
+    }
+  },
+  "json": {
+    "loads": {
+      "js_equivalent": "JSON.parse()",
+      "examples": [
+        {"python": "json.loads(text)", "typescript": "JSON.parse(text)"}
+      ]
+    },
+    "dumps": {
+      "js_equivalent": "JSON.stringify()",
+      "examples": [
+        {"python": "json.dumps(obj)", "typescript": "JSON.stringify(obj)"},
+        {"python": "json.dumps(obj, indent=2)", "typescript": "JSON.stringify(obj, null, 2)"}
+      ]
+    }
+  },
+  "re": {
+    "compile": {
+      "js_equivalent": "new RegExp()",
+      "examples": [
+        {"python": "re.compile(r'\\d+')", "typescript": "new RegExp('\\\\d+')"}
+      ]
+    },
+    "search": {
+      "js_equivalent": "string.match() / regexp.exec()",
+      "examples": [
+        {"python": "re.search(pattern, text)", "typescript": "text.match(pattern)"}
+      ]
+    },
+    "findall": {
+      "js_equivalent": "string.matchAll()",
+      "examples": [
+        {"python": "re.findall(pattern, text)", "typescript": "Array.from(text.matchAll(pattern))"}
+      ]
+    },
+    "sub": {
+      "js_equivalent": "string.replace()",
+      "examples": [
+        {"python": "re.sub(pattern, replacement, text)", "typescript": "text.replace(pattern, replacement)"}
+      ]
+    }
+  },
+  "datetime": {
+    "datetime": {
+      "js_equivalent": "Date",
+      "package": "date-fns (recommended)",
+      "examples": [
+        {"python": "datetime.now()", "typescript": "new Date()"},
+        {"python": "datetime(2023, 1, 1)", "typescript": "new Date(2023, 0, 1)"}
+      ]
+    },
+    "timedelta": {
+      "js_equivalent": "number (milliseconds)",
+      "package": "date-fns",
+      "examples": [
+        {"python": "timedelta(days=1)", "typescript": "24 * 60 * 60 * 1000"},
+        {"python": "timedelta(hours=2)", "typescript": "2 * 60 * 60 * 1000"}
+      ]
+    }
+  },
+  "time": {
+    "sleep": {
+      "js_equivalent": "setTimeout / await new Promise",
+      "examples": [
+        {"python": "time.sleep(1)", "typescript": "await new Promise(resolve => setTimeout(resolve, 1000))"}
+      ]
+    },
+    "time": {
+      "js_equivalent": "Date.now() / 1000",
+      "examples": [
+        {"python": "time.time()", "typescript": "Date.now() / 1000"}
+      ]
+    }
+  },
+  "random": {
+    "random": {
+      "js_equivalent": "Math.random()",
+      "examples": [
+        {"python": "random.random()", "typescript": "Math.random()"}
+      ]
+    },
+    "randint": {
+      "js_equivalent": "Math.floor(Math.random() * (max - min + 1)) + min",
+      "examples": [
+        {"python": "random.randint(1, 6)", "typescript": "Math.floor(Math.random() * 6) + 1"}
+      ]
+    },
+    "choice": {
+      "js_equivalent": "array[Math.floor(Math.random() * array.length)]",
+      "examples": [
+        {"python": "random.choice(items)", "typescript": "items[Math.floor(Math.random() * items.length)]"}
+      ]
+    },
+    "shuffle": {
+      "js_equivalent": "array.sort(() => Math.random() - 0.5)",
+      "notes": ["Fisher-Yates shuffle is better"],
+      "examples": [
+        {"python": "random.shuffle(items)", "typescript": "items.sort(() => Math.random() - 0.5)"}
+      ]
+    }
+  },
+  "math": {
+    "pi": {
+      "js_equivalent": "Math.PI",
+      "examples": [
+        {"python": "math.pi", "typescript": "Math.PI"}
+      ]
+    },
+    "e": {
+      "js_equivalent": "Math.E",
+      "examples": [
+        {"python": "math.e", "typescript": "Math.E"}
+      ]
+    },
+    "sqrt": {
+      "js_equivalent": "Math.sqrt()",
+      "examples": [
+        {"python": "math.sqrt(x)", "typescript": "Math.sqrt(x)"}
+      ]
+    },
+    "pow": {
+      "js_equivalent": "Math.pow() / **",
+      "examples": [
+        {"python": "math.pow(x, y)", "typescript": "Math.pow(x, y)"},
+        {"python": "x ** y", "typescript": "x ** y"}
+      ]
+    },
+    "floor": {
+      "js_equivalent": "Math.floor()",
+      "examples": [
+        {"python": "math.floor(x)", "typescript": "Math.floor(x)"}
+      ]
+    },
+    "ceil": {
+      "js_equivalent": "Math.ceil()",
+      "examples": [
+        {"python": "math.ceil(x)", "typescript": "Math.ceil(x)"}
+      ]
+    },
+    "sin": {
+      "js_equivalent": "Math.sin()",
+      "examples": [
+        {"python": "math.sin(x)", "typescript": "Math.sin(x)"}
+      ]
+    },
+    "cos": {
+      "js_equivalent": "Math.cos()",
+      "examples": [
+        {"python": "math.cos(x)", "typescript": "Math.cos(x)"}
+      ]
+    },
+    "tan": {
+      "js_equivalent": "Math.tan()",
+      "examples": [
+        {"python": "math.tan(x)", "typescript": "Math.tan(x)"}
+      ]
+    }
+  },
+  "collections": {
+    "defaultdict": {
+      "js_equivalent": "Map with default value logic",
+      "examples": [
+        {"python": "defaultdict(list)", "typescript": "new Map() // with custom get logic"}
+      ]
+    },
+    "Counter": {
+      "js_equivalent": "Map / Object for counting",
+      "examples": [
+        {"python": "Counter(items)", "typescript": "items.reduce((acc, item) => acc.set(item, (acc.get(item) || 0) + 1), new Map())"}
+      ]
+    },
+    "deque": {
+      "js_equivalent": "Array (with performance caveats)",
+      "notes": ["JavaScript arrays are not optimized for front operations"],
+      "examples": [
+        {"python": "deque([1, 2, 3])", "typescript": "[1, 2, 3]"}
+      ]
+    },
+    "OrderedDict": {
+      "js_equivalent": "Map",
+      "notes": ["JavaScript objects maintain insertion order since ES2015"],
+      "examples": [
+        {"python": "OrderedDict()", "typescript": "new Map()"}
+      ]
+    }
+  },
+  "itertools": {
+    "chain": {
+      "js_equivalent": "arrays.flat() / [...array1, ...array2]",
+      "examples": [
+        {"python": "itertools.chain(a, b)", "typescript": "[...a, ...b]"}
+      ]
+    },
+    "combinations": {
+      "js_equivalent": "Custom implementation needed",
+      "package": "combinatorics libraries",
+      "examples": [
+        {"python": "itertools.combinations(items, 2)", "typescript": "// Custom implementation required"}
+      ]
+    },
+    "permutations": {
+      "js_equivalent": "Custom implementation needed",
+      "package": "combinatorics libraries",
+      "examples": [
+        {"python": "itertools.permutations(items)", "typescript": "// Custom implementation required"}
+      ]
+    }
+  },
+  "functools": {
+    "reduce": {
+      "js_equivalent": "array.reduce()",
+      "examples": [
+        {"python": "functools.reduce(func, items, initial)", "typescript": "items.reduce(func, initial)"}
+      ]
+    },
+    "partial": {
+      "js_equivalent": "arrow function / bind()",
+      "examples": [
+        {"python": "functools.partial(func, arg1)", "typescript": "(...args) => func(arg1, ...args)"}
+      ]
+    }
+  }
+} 

@@ -11,6 +11,7 @@ interface PythonType {
   args?: PythonType[];
   union?: boolean;
   optional?: boolean;
+  python39Plus?: boolean; // Indicates if this uses Python 3.9+ syntax
 }
 
 interface TypeScriptMapping {
@@ -58,28 +59,35 @@ class TypeAnalyzer {
       alternatives: [{ name: 'Buffer', confidence: 'medium' }]
     },
     
-    // Collections
+    // Collections - Python 3.9+ built-in generics preferred
     'list': {
       name: 'Array',
       generic: true,
-      confidence: 'high'
+      confidence: 'high',
+      notes: ['Python 3.9+ built-in generic - no typing import needed']
     },
     'tuple': {
       name: 'readonly',
       generic: true,
       confidence: 'high',
-      notes: ['Use readonly tuple types for immutability']
+      notes: ['Use readonly tuple types for immutability', 'Python 3.9+ built-in generic preferred']
     },
     'dict': {
       name: 'Record',
       generic: true,
       confidence: 'medium',
-      notes: ['Consider Map for dynamic keys'],
+      notes: ['Consider Map for dynamic keys', 'Python 3.9+ built-in generic preferred'],
       alternatives: [{ name: 'Map', confidence: 'medium' }]
     },
     'set': {
       name: 'Set',
-      confidence: 'high'
+      confidence: 'high',
+      notes: ['Python 3.9+ built-in generic - no typing import needed']
+    },
+    'frozenset': {
+      name: 'ReadonlySet',
+      confidence: 'medium',
+      notes: ['Python 3.9+ built-in generic', 'Consider readonly Set type in TypeScript']
     },
     
     // Optional and Union types
@@ -179,10 +187,21 @@ class TypeAnalyzer {
   };
 
   private parseTypeString(typeStr: string): PythonType {
-    // Simple type parsing - in a real implementation this would be more sophisticated
+    // Enhanced type parsing optimized for Python 3.9+
     typeStr = typeStr.trim();
     
-    // Handle Optional[T]
+    // Handle Python 3.9+ union syntax: str | int | None
+    if (typeStr.includes(' | ')) {
+      const unionTypes = typeStr.split(' | ').map(t => t.trim());
+      return {
+        name: 'Union',
+        args: unionTypes.map(t => this.parseTypeString(t)),
+        union: true,
+        python39Plus: true
+      };
+    }
+    
+    // Handle Optional[T] (legacy syntax)
     if (typeStr.startsWith('Optional[')) {
       const innerType = typeStr.slice(9, -1);
       return {
@@ -192,7 +211,7 @@ class TypeAnalyzer {
       };
     }
     
-    // Handle Union[T, U, ...]
+    // Handle Union[T, U, ...] (legacy syntax)
     if (typeStr.startsWith('Union[')) {
       const innerTypes = typeStr.slice(6, -1).split(',').map(t => t.trim());
       return {
@@ -202,11 +221,36 @@ class TypeAnalyzer {
       };
     }
     
-    // Handle Generic[T, U, ...]
+    // Handle Python 3.9+ built-in generics: list[str], dict[str, int], etc.
+    const python39GenericMatch = typeStr.match(/^(list|dict|tuple|set|frozenset)\[(.+)\]$/);
+    if (python39GenericMatch) {
+      const [, baseName, argsStr] = python39GenericMatch;
+      const args = this.parseGenericArgs(argsStr);
+      return {
+        name: baseName,
+        generic: true,
+        args,
+        python39Plus: true
+      };
+    }
+    
+    // Handle typing module generics: List[str], Dict[str, int], etc. (legacy)
+    const typingGenericMatch = typeStr.match(/^([A-Z][A-Za-z_][A-Za-z0-9_]*)\[(.+)\]$/);
+    if (typingGenericMatch) {
+      const [, baseName, argsStr] = typingGenericMatch;
+      const args = this.parseGenericArgs(argsStr);
+      return {
+        name: baseName,
+        generic: true,
+        args
+      };
+    }
+    
+    // Handle other Generic[T, U, ...] patterns
     const genericMatch = typeStr.match(/^([A-Za-z_][A-Za-z0-9_]*)\[(.+)\]$/);
     if (genericMatch) {
       const [, baseName, argsStr] = genericMatch;
-      const args = argsStr.split(',').map(t => this.parseTypeString(t.trim()));
+      const args = this.parseGenericArgs(argsStr);
       return {
         name: baseName,
         generic: true,
@@ -228,6 +272,34 @@ class TypeAnalyzer {
     return {
       name: typeStr
     };
+  }
+  
+  private parseGenericArgs(argsStr: string): PythonType[] {
+    // Smart parsing of generic arguments that handles nested brackets
+    const args: PythonType[] = [];
+    let current = '';
+    let depth = 0;
+    
+    for (const char of argsStr) {
+      if (char === '[') {
+        depth++;
+        current += char;
+      } else if (char === ']') {
+        depth--;
+        current += char;
+      } else if (char === ',' && depth === 0) {
+        args.push(this.parseTypeString(current.trim()));
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    
+    if (current.trim()) {
+      args.push(this.parseTypeString(current.trim()));
+    }
+    
+    return args;
   }
 
   private mapPythonType(pythonType: PythonType): TypeScriptMapping {
@@ -309,12 +381,39 @@ class TypeAnalyzer {
   private generateConversionNotes(pythonType: PythonType, tsMapping: TypeScriptMapping): string[] {
     const notes: string[] = [];
     
+    // Add Python 3.9+ specific guidance first
+    if (pythonType.python39Plus) {
+      notes.push('✨ Using modern Python 3.9+ syntax - excellent for maintainability!');
+      
+      if (pythonType.union) {
+        notes.push('🎯 Python 3.9+ union syntax (|) maps perfectly to TypeScript union types');
+      }
+      
+      if (pythonType.generic && ['list', 'dict', 'tuple', 'set'].includes(pythonType.name)) {
+        notes.push('🎯 Python 3.9+ built-in generics are the preferred approach');
+        notes.push('📚 No need to import from typing module for basic collections');
+      }
+    } else {
+      // Legacy syntax guidance
+      if (pythonType.name === 'Union') {
+        notes.push('💡 Consider upgrading to Python 3.9+ union syntax: use "str | int" instead of "Union[str, int]"');
+      }
+      
+      if (['List', 'Dict', 'Tuple', 'Set'].includes(pythonType.name) && pythonType.module === 'typing') {
+        const modernEquivalent = pythonType.name.toLowerCase();
+        notes.push(`💡 Consider upgrading to Python 3.9+ syntax: use "${modernEquivalent}[...]" instead of "${pythonType.name}[...]"`);
+      }
+    }
+    
     if (tsMapping.notes) {
       notes.push(...tsMapping.notes);
     }
     
     if (pythonType.name === 'dict') {
       notes.push('Consider using Map for dynamic keys or interface for known keys');
+      if (pythonType.python39Plus) {
+        notes.push('🎯 Python 3.9+ dict merge operators (| and |=) have no direct TypeScript equivalent');
+      }
     }
     
     if (pythonType.name === 'list' && pythonType.args) {
@@ -323,6 +422,9 @@ class TypeAnalyzer {
     
     if (pythonType.union) {
       notes.push('Use discriminated unions with type guards for type safety');
+      if (pythonType.python39Plus) {
+        notes.push('🎯 TypeScript union syntax aligns perfectly with Python 3.9+ union syntax');
+      }
     }
     
     if (pythonType.module === 'datetime') {
@@ -448,6 +550,13 @@ class TypeAnalyzer {
     if (result.pythonType.generic && result.pythonType.args) {
       output += `[${result.pythonType.args.map(arg => arg.name).join(', ')}]`;
     }
+    
+    // Add Python 3.9+ indicator
+    if (result.pythonType.python39Plus) {
+      output += ` ${chalk.green('✨ Python 3.9+')}`;
+    } else {
+      output += ` ${chalk.yellow('⚠️  Legacy syntax')}`;
+    }
     output += '\n\n';
     
     // TypeScript mapping
@@ -508,18 +617,18 @@ export async function registerTypeAnalysisTool(server: McpServer): Promise<void>
   
   server.tool(
     "type-analysis",
-    "Analyzes Python types and provides TypeScript mappings with migration guidance, runtime considerations, and testing approaches.",
+    "Analyzes Python types and provides TypeScript mappings with migration guidance, runtime considerations, and testing approaches. Optimized for Python 3.9+ syntax including union operators (|) and built-in generics (list[str], dict[str, int]).",
     {
-      pythonType: z.string().describe("Python type annotation as a string (e.g., 'List[str]', 'Dict[str, int]', 'Optional[datetime.datetime]')"),
+      pythonType: z.string().describe("Python type annotation as a string. Supports modern Python 3.9+ syntax: 'str | int', 'list[str]', 'dict[str, int]' as well as legacy 'Union[str, int]', 'List[str]', 'Dict[str, int]'"),
       context: z.string().optional().describe("Additional context about the type usage")
     },
     {
-      title: "Python-to-TypeScript Type Analysis",
+      title: "Python-to-TypeScript Type Analysis (Python 3.9+ Optimized)",
       readOnlyHint: true,
       idempotentHint: true
     },
     async (args) => analyzer.analyzeType(args)
   );
   
-  console.error(chalk.green("✅ Registered type analysis tool"));
+  console.error(chalk.green("✅ Registered Python 3.9+ optimized type analysis tool"));
 } 

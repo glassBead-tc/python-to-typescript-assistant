@@ -21,16 +21,16 @@ class PatternMapper {
   private patterns: PatternMapping[] = [
     {
       pythonPattern: "List Comprehension",
-      description: "Python list comprehension syntax",
+      description: "Python list comprehension syntax (Python 3.9+ with built-in generics)",
       typeScriptEquivalent: "Array.map/filter/reduce",
       explanation: "Convert list comprehensions to functional array methods",
       complexity: "simple",
       caveats: ["Less readable for complex expressions", "May need multiple chained calls"],
       examples: [
         {
-          python: "[x * 2 for x in numbers if x > 0]",
-          typescript: "numbers.filter(x => x > 0).map(x => x * 2)",
-          notes: "Split filter and map operations"
+          python: "# Python 3.9+\nnumbers: list[int] = [1, 2, 3, 4]\nresult: list[int] = [x * 2 for x in numbers if x > 0]",
+          typescript: "const numbers: number[] = [1, 2, 3, 4];\nconst result: number[] = numbers.filter(x => x > 0).map(x => x * 2);",
+          notes: "Python 3.9+ list[T] syntax maps directly to TypeScript T[]"
         }
       ]
     },
@@ -76,6 +76,66 @@ class PatternMapper {
           python: "a, b = get_pair()",
           typescript: "const [a, b] = getPair();",
           notes: "TypeScript destructuring is very similar"
+        }
+      ]
+    },
+    {
+      pythonPattern: "Union Type Operator (Python 3.9+)",
+      description: "Python 3.9+ union type syntax using | operator",
+      typeScriptEquivalent: "TypeScript union types",
+      explanation: "Python 3.9+ union syntax maps perfectly to TypeScript union types",
+      complexity: "simple",
+      caveats: ["Requires Python 3.9+", "Runtime type checking still needed"],
+      examples: [
+        {
+          python: "# Python 3.9+\ndef process_data(value: str | int | None) -> str:\n    if value is None:\n        return 'empty'\n    return str(value)",
+          typescript: "function processData(value: string | number | null): string {\n  if (value === null) {\n    return 'empty';\n  }\n  return String(value);\n}",
+          notes: "Perfect syntax alignment between Python 3.9+ and TypeScript"
+        }
+      ]
+    },
+    {
+      pythonPattern: "Dict Merge Operator (Python 3.9+)",
+      description: "Python 3.9+ dictionary merge operators | and |=",
+      typeScriptEquivalent: "Object spread operator or Object.assign",
+      explanation: "Use object spread for merging, no direct |= equivalent",
+      complexity: "simple",
+      caveats: ["No mutating merge equivalent to |=", "Spread creates new object"],
+      examples: [
+        {
+          python: "# Python 3.9+\ndict1: dict[str, int] = {'a': 1, 'b': 2}\ndict2: dict[str, int] = {'c': 3, 'd': 4}\nmerged = dict1 | dict2  # New dict\ndict1 |= dict2  # Mutate dict1",
+          typescript: "const dict1: Record<string, number> = {a: 1, b: 2};\nconst dict2: Record<string, number> = {c: 3, d: 4};\nconst merged = {...dict1, ...dict2};  // New object\nObject.assign(dict1, dict2);  // Mutate dict1",
+          notes: "Use Object.assign for mutation, spread for immutable merge"
+        }
+      ]
+    },
+    {
+      pythonPattern: "String Prefix/Suffix Methods (Python 3.9+)",
+      description: "Python 3.9+ removeprefix() and removesuffix() methods",
+      typeScriptEquivalent: "String slice with startsWith/endsWith",
+      explanation: "Manually implement prefix/suffix removal logic",
+      complexity: "simple",
+      caveats: ["No built-in methods", "Must check before removing"],
+      examples: [
+        {
+          python: "# Python 3.9+\ntext = 'hello_world'\nwithout_prefix = text.removeprefix('hello_')\nwithout_suffix = text.removesuffix('_world')",
+          typescript: "const text = 'hello_world';\nconst withoutPrefix = text.startsWith('hello_') ? text.slice(6) : text;\nconst withoutSuffix = text.endsWith('_world') ? text.slice(0, -6) : text;",
+          notes: "Consider creating utility functions for common use cases"
+        }
+      ]
+    },
+    {
+      pythonPattern: "Built-in Generic Types (Python 3.9+)",
+      description: "Python 3.9+ built-in generic collections without typing imports",
+      typeScriptEquivalent: "TypeScript built-in array and object types",
+      explanation: "Direct mapping to TypeScript's native generic types",
+      complexity: "simple",
+      caveats: ["Perfect alignment", "No typing imports needed"],
+      examples: [
+        {
+          python: "# Python 3.9+ - No typing import needed!\nnames: list[str] = ['Alice', 'Bob']\nages: dict[str, int] = {'Alice': 30, 'Bob': 25}\ncoords: tuple[float, float] = (1.0, 2.0)\nunique_ids: set[int] = {1, 2, 3}",
+          typescript: "const names: string[] = ['Alice', 'Bob'];\nconst ages: Record<string, number> = {Alice: 30, Bob: 25};\nconst coords: readonly [number, number] = [1.0, 2.0];\nconst uniqueIds: Set<number> = new Set([1, 2, 3]);",
+          notes: "Python 3.9+ syntax is much cleaner and aligns better with TypeScript"
         }
       ]
     }
@@ -169,17 +229,17 @@ export async function registerPatternMappingTool(server: McpServer): Promise<voi
   
   server.tool(
     "pattern-mapping",
-    "Convert Python language patterns and idioms to TypeScript equivalents with examples and caveats.",
+    "Convert Python language patterns and idioms to TypeScript equivalents with examples and caveats. Emphasizes Python 3.9+ modern patterns including union operators, dict merge operators, and built-in generics.",
     {
-      pattern: z.string().describe("Python pattern or idiom to convert (e.g., 'list comprehension', 'context manager', 'multiple assignment')")
+      pattern: z.string().describe("Python pattern or idiom to convert. Supports Python 3.9+ patterns: 'union operator', 'dict merge', 'built-in generics', 'string prefix/suffix' as well as classic patterns: 'list comprehension', 'context manager', 'multiple assignment'")
     },
     {
-      title: "Python Pattern to TypeScript Mapping",
+      title: "Python Pattern to TypeScript Mapping (Python 3.9+ Optimized)",
       readOnlyHint: true,
       idempotentHint: true
     },
     async (args) => mapper.mapPattern(args)
   );
   
-  console.error(chalk.green("✅ Registered pattern mapping tool"));
+  console.error(chalk.green("✅ Registered Python 3.9+ optimized pattern mapping tool"));
 } 

@@ -1,0 +1,335 @@
+{
+  "builtin_types": {
+    "int": {
+      "name": "number",
+      "confidence": "high",
+      "notes": ["JavaScript number precision limits (53-bit integers)", "Consider BigInt for large integers"],
+      "runtimeConsiderations": ["Precision loss possible for very large integers", "No integer vs float distinction"],
+      "testingApproach": ["Test boundary values", "Verify precision requirements"]
+    },
+    "float": {
+      "name": "number", 
+      "confidence": "high",
+      "notes": ["JavaScript uses IEEE 754 double precision"],
+      "runtimeConsiderations": ["Same precision as Python float", "NaN and Infinity handling differs"],
+      "testingApproach": ["Test special values (NaN, Infinity)", "Verify floating point precision"]
+    },
+    "str": {
+      "name": "string",
+      "confidence": "high",
+      "notes": ["Unicode handling differences between Python and JavaScript"],
+      "runtimeConsiderations": ["UTF-16 vs UTF-8 differences", "String indexing behavior varies"],
+      "testingApproach": ["Test Unicode edge cases", "Verify string manipulation operations"]
+    },
+    "bool": {
+      "name": "boolean",
+      "confidence": "high",
+      "notes": ["Truthiness rules differ between Python and JavaScript"],
+      "runtimeConsiderations": ["Different falsy values", "Type coercion differences"],
+      "testingApproach": ["Test truthiness edge cases", "Verify boolean conversion"]
+    },
+    "bytes": {
+      "name": "Uint8Array",
+      "confidence": "medium",
+      "notes": ["Consider Buffer for Node.js environments", "Different API for byte manipulation"],
+      "alternatives": [{"name": "Buffer", "confidence": "medium", "notes": ["Node.js specific"]}],
+      "runtimeConsiderations": ["Different encoding/decoding APIs", "Memory layout differences"],
+      "testingApproach": ["Test encoding/decoding operations", "Verify buffer operations"]
+    },
+    "list": {
+      "name": "Array",
+      "generic": true,
+      "confidence": "high",
+      "notes": ["Array type - ensure homogeneous elements or use union types"],
+      "runtimeConsiderations": ["Mutability semantics match", "Index bounds checking differs"],
+      "testingApproach": ["Test array operations", "Verify type homogeneity"]
+    },
+    "tuple": {
+      "name": "readonly",
+      "generic": true,
+      "confidence": "high",
+      "notes": ["Use readonly tuple types for immutability", "Consider as const assertions"],
+      "runtimeConsiderations": ["Runtime immutability not enforced", "Length checking at compile time"],
+      "testingApproach": ["Test tuple destructuring", "Verify immutability expectations"]
+    },
+    "dict": {
+      "name": "Record",
+      "generic": true,
+      "confidence": "medium",
+      "notes": ["Consider Map for dynamic keys", "Object for known string keys"],
+      "alternatives": [{"name": "Map", "confidence": "medium", "notes": ["Better for dynamic keys"]}],
+      "runtimeConsiderations": ["Object iteration order guaranteed", "Key type restrictions"],
+      "testingApproach": ["Test key iteration", "Verify dynamic key operations"]
+    },
+    "set": {
+      "name": "Set",
+      "confidence": "high",
+      "notes": ["JavaScript Set has similar semantics"],
+      "runtimeConsiderations": ["Iteration order guaranteed", "Equality semantics"],
+      "testingApproach": ["Test set operations", "Verify uniqueness guarantees"]
+    },
+    "None": {
+      "name": "null",
+      "confidence": "high",
+      "notes": ["Python None maps to null", "Consider undefined vs null semantics", "TypeScript prefers undefined for optional values"],
+      "alternatives": [{"name": "undefined", "confidence": "high", "notes": ["More idiomatic in TypeScript for optional properties"]}],
+      "runtimeConsiderations": ["null vs undefined distinction", "Truthiness differences", "Optional chaining works with both"],
+      "testingApproach": ["Test null/undefined handling", "Verify optional chaining", "Test truthiness comparisons"],
+      "realWorldUsage": "py-ts-interfaces project uses null mapping consistently"
+    },
+    "Union": {
+      "name": "union",
+      "confidence": "high",
+      "notes": ["Use discriminated unions for better type safety", "Consider type guards"],
+      "runtimeConsiderations": ["Runtime type checking needed", "Type narrowing required"],
+      "testingApproach": ["Test all union branches", "Verify type guards"]
+    },
+    "Optional": {
+      "name": "optional",
+      "confidence": "high", 
+      "notes": ["Translates to T | undefined", "Use optional chaining"],
+      "runtimeConsiderations": ["Handle undefined case explicitly", "Optional chaining available"],
+      "testingApproach": ["Test undefined handling", "Verify optional access patterns"]
+    },
+    "Callable": {
+      "name": "Function",
+      "confidence": "medium",
+      "notes": ["Define specific function signatures when possible", "Avoid generic Function type"],
+      "alternatives": [{"name": "(...args: any[]) => any", "confidence": "low", "notes": ["More specific but less safe"]}],
+      "runtimeConsiderations": ["Function.bind behavior differs", "Closure semantics"],
+      "testingApproach": ["Test function signatures", "Verify call patterns"]
+    },
+    "Any": {
+      "name": "any",
+      "confidence": "low",
+      "notes": ["Avoid any; use unknown or specific types", "Defeats TypeScript benefits"],
+      "alternatives": [{"name": "unknown", "confidence": "high", "notes": ["Type-safe alternative"]}],
+      "runtimeConsiderations": ["No type checking", "Runtime errors possible"],
+      "testingApproach": ["Comprehensive runtime testing required", "Type assertion testing"]
+    },
+    "object": {
+      "name": "unknown",
+      "confidence": "medium",
+      "notes": ["Use unknown instead of any for type safety", "Requires type narrowing"],
+      "runtimeConsiderations": ["Requires runtime type checking", "Type guards needed"],
+      "testingApproach": ["Test type narrowing", "Verify type guards"]
+    }
+  },
+  "standard_library": {
+    "datetime": {
+      "datetime": {
+        "name": "Date",
+        "confidence": "high",
+        "notes": ["JavaScript Date has different behavior than Python datetime", "Consider date-fns or day.js"],
+        "runtimeConsiderations": ["Timezone handling differs", "Parsing behavior varies"],
+        "testingApproach": ["Test date operations", "Verify timezone handling"],
+        "alternatives": [
+          {"name": "Temporal", "confidence": "medium", "notes": ["Future standard API"], "package": "@js-temporal/polyfill"}
+        ]
+      },
+      "timedelta": {
+        "name": "number",
+        "confidence": "medium",
+        "notes": ["Represent as milliseconds", "Consider date-fns duration"],
+        "runtimeConsiderations": ["Precision differences", "Arithmetic operations"],
+        "testingApproach": ["Test duration calculations", "Verify precision"],
+        "alternatives": [
+          {"name": "Duration", "confidence": "high", "notes": ["date-fns duration"], "package": "date-fns"}
+        ]
+      },
+      "date": {
+        "name": "Date",
+        "confidence": "medium",
+        "notes": ["JavaScript Date includes time", "Extract date part manually"],
+        "runtimeConsiderations": ["No date-only type", "Timezone considerations"],
+        "testingApproach": ["Test date-only operations", "Verify date comparisons"]
+      },
+      "time": {
+        "name": "string",
+        "confidence": "low",
+        "notes": ["No native time type", "Use string format or custom class"],
+        "runtimeConsiderations": ["String parsing required", "No time arithmetic"],
+        "testingApproach": ["Test time parsing", "Verify time operations"],
+        "alternatives": [
+          {"name": "Time", "confidence": "medium", "notes": ["Custom implementation"], "package": "custom"}
+        ]
+      }
+    },
+    "pathlib": {
+      "Path": {
+        "name": "string",
+        "confidence": "medium",
+        "notes": ["Use string paths or path library", "Node.js path module for operations"],
+        "runtimeConsiderations": ["Path separator differences", "Absolute vs relative"],
+        "testingApproach": ["Test path operations", "Verify cross-platform compatibility"],
+        "alternatives": [
+          {"name": "URL", "confidence": "low", "notes": ["For URL-like paths"]},
+          {"name": "path", "confidence": "high", "notes": ["Node.js built-in"], "package": "path"}
+        ]
+      }
+    },
+    "uuid": {
+      "UUID": {
+        "name": "string",
+        "confidence": "high",
+        "notes": ["Use string representation", "Consider uuid library for generation"],
+        "runtimeConsiderations": ["String validation needed", "Format consistency"],
+        "testingApproach": ["Test UUID validation", "Verify format consistency"],
+        "alternatives": [
+          {"name": "UUID", "confidence": "high", "notes": ["Branded string type"], "package": "uuid"}
+        ]
+      }
+    },
+    "decimal": {
+      "Decimal": {
+        "name": "number",
+        "confidence": "low",
+        "notes": ["JavaScript number precision issues", "Consider decimal.js library"],
+        "runtimeConsiderations": ["Precision loss", "Rounding errors"],
+        "testingApproach": ["Test precision requirements", "Verify decimal operations"],
+        "alternatives": [
+          {"name": "Decimal", "confidence": "high", "notes": ["High precision"], "package": "decimal.js"}
+        ]
+      }
+    },
+    "dataclasses": {
+      "dataclass": {
+        "name": "interface",
+        "confidence": "high",
+        "notes": ["Convert to TypeScript interface or class", "Consider readonly properties"],
+        "runtimeConsiderations": ["No automatic methods", "Structural typing"],
+        "testingApproach": ["Test object structure", "Verify property access"],
+        "alternatives": [
+          {"name": "class", "confidence": "medium", "notes": ["For behavior and data"]}
+        ]
+      }
+    }
+  },
+  "typing_module": {
+    "List": {
+      "name": "Array",
+      "generic": true,
+      "confidence": "high",
+      "notes": ["Direct equivalent", "In Python 3.9+, can use built-in 'list' instead of typing.List"],
+      "runtimeConsiderations": ["Mutability semantics", "Homogeneous vs heterogeneous arrays"],
+      "testingApproach": ["Test array operations", "Verify type safety with generic parameters"],
+      "pythonVersions": {
+        "pre_3.9": "from typing import List",
+        "3.9_plus": "list[T] # built-in generic"
+      }
+    },
+    "Dict": {
+      "name": "Record",
+      "generic": true,
+      "confidence": "high",
+      "notes": ["For known string keys", "In Python 3.9+, can use built-in 'dict' instead of typing.Dict"],
+      "alternatives": [
+        {"name": "Map", "confidence": "medium", "notes": ["For dynamic keys", "Better runtime performance for frequent additions/deletions"]},
+        {"name": "Object index signature", "confidence": "high", "notes": ["{ [key: string]: ValueType }"]}
+      ],
+      "runtimeConsiderations": ["Key type restrictions in Record", "Object property iteration order"],
+      "testingApproach": ["Test key-value operations", "Verify type safety with generic parameters"],
+      "pythonVersions": {
+        "pre_3.9": "from typing import Dict",
+        "3.9_plus": "dict[K, V] # built-in generic"
+      },
+      "realWorldMapping": "Dict[str, int] → Record<string, number> (py-ts-interfaces)"
+    },
+    "Set": {
+      "name": "Set",
+      "confidence": "high",
+      "notes": ["Direct equivalent"],
+      "runtimeConsiderations": ["Iteration order"],
+      "testingApproach": ["Test set operations"]
+    },
+    "Tuple": {
+      "name": "readonly",
+      "generic": true,
+      "confidence": "high",
+      "notes": ["Use readonly tuple types"],
+      "runtimeConsiderations": ["Compile-time immutability only"],
+      "testingApproach": ["Test tuple destructuring"]
+    },
+    "Optional": {
+      "name": "optional",
+      "confidence": "high",
+      "notes": ["T | undefined"],
+      "runtimeConsiderations": ["Undefined handling"],
+      "testingApproach": ["Test optional access"]
+    },
+    "Union": {
+      "name": "union",
+      "confidence": "high",
+      "notes": ["Discriminated unions preferred"],
+      "runtimeConsiderations": ["Type narrowing required"],
+      "testingApproach": ["Test all branches"]
+    },
+    "Callable": {
+      "name": "Function",
+      "confidence": "medium",
+      "notes": ["Define specific signatures"],
+      "runtimeConsiderations": ["Function behavior"],
+      "testingApproach": ["Test call patterns"]
+    },
+    "Any": {
+      "name": "any",
+      "confidence": "low",
+      "notes": ["Avoid when possible"],
+      "alternatives": [{"name": "unknown", "confidence": "high"}],
+      "runtimeConsiderations": ["No type safety"],
+      "testingApproach": ["Comprehensive testing required"]
+    },
+    "TypeVar": {
+      "name": "generic",
+      "confidence": "medium",
+      "notes": ["Convert to TypeScript generic parameter"],
+      "runtimeConsiderations": ["Compile-time only"],
+      "testingApproach": ["Test generic instantiation"]
+    },
+    "Protocol": {
+      "name": "interface",
+      "confidence": "high",
+      "notes": ["Convert to TypeScript interface", "Structural typing"],
+      "runtimeConsiderations": ["Duck typing equivalent"],
+      "testingApproach": ["Test interface compliance"]
+    },
+    "Literal": {
+      "name": "literal",
+      "confidence": "high",
+      "notes": ["Use TypeScript literal types"],
+      "runtimeConsiderations": ["Exact value matching"],
+      "testingApproach": ["Test literal value constraints"]
+    },
+    "ClassVar": {
+      "name": "static",
+      "confidence": "high",
+      "notes": ["Use static class properties"],
+      "runtimeConsiderations": ["Class vs instance"],
+      "testingApproach": ["Test static access"]
+    },
+    "Final": {
+      "name": "readonly",
+      "confidence": "medium",
+      "notes": ["Use readonly modifier", "Compile-time only"],
+      "runtimeConsiderations": ["No runtime enforcement"],
+      "testingApproach": ["Test immutability expectations"]
+    }
+  },
+  "complex_mappings": {
+    "nested_generics": {
+      "description": "Handle deeply nested generic types",
+      "strategy": "Recursively map type arguments",
+      "example": "Dict[str, List[int]] -> Record<string, number[]>"
+    },
+    "union_types": {
+      "description": "Convert Python Union to TypeScript union",
+      "strategy": "Use discriminated unions when possible",
+      "example": "Union[str, int] -> string | number"
+    },
+    "callable_types": {
+      "description": "Function type signatures",
+      "strategy": "Map to specific function types",
+      "example": "Callable[[str, int], bool] -> (arg0: string, arg1: number) => boolean"
+    }
+  }
+} 

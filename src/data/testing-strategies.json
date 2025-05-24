@@ -1,0 +1,298 @@
+{
+  "by_complexity": {
+    "trivial": {
+      "description": "Simple type conversions and basic operations",
+      "strategies": [
+        "Basic unit tests for type conversion",
+        "Value equality assertions",
+        "Simple input/output validation"
+      ],
+      "tools": ["Jest", "Vitest"],
+      "patterns": [
+        {
+          "name": "Type conversion tests",
+          "template": "expect(convertPythonFunction(input)).toBe(expectedOutput);"
+        },
+        {
+          "name": "Primitive operations",
+          "template": "expect(mathOperation(a, b)).toEqual(pythonResult);"
+        }
+      ]
+    },
+    "simple": {
+      "description": "Straightforward patterns with minimal complexity",
+      "strategies": [
+        "Unit tests with edge cases",
+        "Property-based testing for validation",
+        "Basic boundary testing"
+      ],
+      "tools": ["Jest", "Vitest", "fast-check"],
+      "patterns": [
+        {
+          "name": "Edge case testing",
+          "template": "describe('edge cases', () => {\n  test('empty arrays', () => {\n    expect(func([])).toEqual([]);\n  });\n});"
+        },
+        {
+          "name": "Property-based test",
+          "template": "fc.assert(fc.property(fc.array(fc.integer()), (arr) => {\n  return isValidResult(convertedFunction(arr));\n}));"
+        }
+      ]
+    },
+    "moderate": {
+      "description": "Complex patterns requiring systematic validation",
+      "strategies": [
+        "Comprehensive unit tests",
+        "Integration tests",
+        "Property-based testing",
+        "State transition testing",
+        "Behavioral compatibility tests"
+      ],
+      "tools": ["Jest", "Vitest", "fast-check", "Storybook"],
+      "patterns": [
+        {
+          "name": "State transition tests",
+          "template": "describe('state transitions', () => {\n  test('maintains state consistency', () => {\n    const obj = new ConvertedClass();\n    obj.method1();\n    expect(obj.state).toMatchSnapshot();\n  });\n});"
+        },
+        {
+          "name": "Integration test",
+          "template": "describe('integration', () => {\n  test('works with other components', async () => {\n    const result = await fullWorkflow(testData);\n    expect(result).toEqual(expectedWorkflowOutput);\n  });\n});"
+        }
+      ]
+    },
+    "complex": {
+      "description": "Intricate patterns with significant behavioral differences",
+      "strategies": [
+        "Extensive unit and integration tests",
+        "Property-based testing",
+        "Performance benchmarking",
+        "Cross-platform testing",
+        "Differential testing (Python vs TypeScript)",
+        "Memory usage validation"
+      ],
+      "tools": ["Jest", "Vitest", "fast-check", "Benchmark.js", "Puppeteer"],
+      "patterns": [
+        {
+          "name": "Differential testing",
+          "template": "describe('differential testing', () => {\n  test('matches Python behavior', async () => {\n    const pythonResult = await runPythonFunction(input);\n    const tsResult = convertedFunction(input);\n    expect(tsResult).toEqual(pythonResult);\n  });\n});"
+        },
+        {
+          "name": "Performance benchmark",
+          "template": "describe('performance', () => {\n  test('meets performance requirements', () => {\n    const start = performance.now();\n    convertedFunction(largeDataSet);\n    const duration = performance.now() - start;\n    expect(duration).toBeLessThan(acceptableThreshold);\n  });\n});"
+        }
+      ]
+    },
+    "requires_redesign": {
+      "description": "Fundamental architectural changes needed",
+      "strategies": [
+        "Complete test suite redesign",
+        "Behavioral compatibility testing",
+        "Performance and correctness validation",
+        "User acceptance testing",
+        "Gradual rollout testing",
+        "Rollback capability testing"
+      ],
+      "tools": ["Jest", "Vitest", "Playwright", "k6", "Custom harnesses"],
+      "patterns": [
+        {
+          "name": "Behavioral compatibility suite",
+          "template": "describe('behavioral compatibility', () => {\n  const testCases = loadPythonTestCases();\n  testCases.forEach(testCase => {\n    test(`case: ${testCase.name}`, () => {\n      const result = newArchitecture.process(testCase.input);\n      expect(result).toMatchBehavior(testCase.expectedBehavior);\n    });\n  });\n});"
+        }
+      ]
+    }
+  },
+  "by_pattern_type": {
+    "data_structures": {
+      "description": "Testing converted data structures",
+      "approaches": [
+        "Structural equality tests",
+        "Operation equivalence tests",
+        "Performance characteristic tests",
+        "Memory usage tests"
+      ],
+      "examples": [
+        {
+          "pattern": "List operations",
+          "tests": [
+            "Length preservation",
+            "Index access",
+            "Iteration order",
+            "Mutation operations"
+          ]
+        },
+        {
+          "pattern": "Dictionary operations", 
+          "tests": [
+            "Key lookup",
+            "Key iteration order",
+            "Value mutation",
+            "Default value handling"
+          ]
+        }
+      ]
+    },
+    "control_flow": {
+      "description": "Testing converted control flow patterns",
+      "approaches": [
+        "Branch coverage testing",
+        "Exception path testing",
+        "State machine validation",
+        "Timing-dependent behavior"
+      ],
+      "examples": [
+        {
+          "pattern": "Exception handling",
+          "tests": [
+            "Exception type matching",
+            "Error message preservation",
+            "Finally block execution",
+            "Nested exception handling"
+          ]
+        },
+        {
+          "pattern": "Async patterns",
+          "tests": [
+            "Promise resolution",
+            "Error propagation",
+            "Concurrent execution",
+            "Resource cleanup"
+          ]
+        }
+      ]
+    },
+    "type_conversions": {
+      "description": "Testing type system mappings",
+      "approaches": [
+        "Type safety validation",
+        "Runtime type checking",
+        "Gradual typing tests",
+        "Type inference validation"
+      ],
+      "examples": [
+        {
+          "pattern": "Union types",
+          "tests": [
+            "Type guard functionality",
+            "Discriminated union handling",
+            "Exhaustiveness checking",
+            "Runtime type validation"
+          ]
+        },
+        {
+          "pattern": "Generic types",
+          "tests": [
+            "Type parameter inference",
+            "Constraint satisfaction",
+            "Variance handling",
+            "Type erasure compatibility"
+          ]
+        }
+      ]
+    },
+    "library_integrations": {
+      "description": "Testing library replacements",
+      "approaches": [
+        "API compatibility tests",
+        "Feature parity validation",
+        "Performance comparison",
+        "Error behavior matching"
+      ],
+      "examples": [
+        {
+          "pattern": "HTTP client replacement",
+          "tests": [
+            "Request/response handling",
+            "Error status codes",
+            "Timeout behavior",
+            "Retry logic"
+          ]
+        },
+        {
+          "pattern": "Database ORM replacement",
+          "tests": [
+            "Query result equivalence",
+            "Transaction behavior",
+            "Connection pooling",
+            "Migration compatibility"
+          ]
+        }
+      ]
+    }
+  },
+  "validation_frameworks": {
+    "differential_testing": {
+      "description": "Compare Python and TypeScript outputs",
+      "setup": {
+        "python_harness": "Python test runner with JSON output",
+        "typescript_harness": "TypeScript test runner with matching input",
+        "comparison_logic": "Deep equality with tolerance for floating point"
+      },
+      "example": {
+        "code": "// Differential test setup\nconst pythonRunner = new PythonTestHarness();\nconst testCases = loadSharedTestCases();\n\ntestCases.forEach(testCase => {\n  test(`differential: ${testCase.name}`, async () => {\n    const pythonResult = await pythonRunner.run(testCase.function, testCase.input);\n    const tsResult = convertedFunction(testCase.input);\n    expect(tsResult).toEqualWithTolerance(pythonResult);\n  });\n});"
+      }
+    },
+    "property_based_testing": {
+      "description": "Generate test inputs to find edge cases",
+      "libraries": ["fast-check", "JSVerify"],
+      "example": {
+        "code": "import fc from 'fast-check';\n\ntest('list comprehension equivalent', () => {\n  fc.assert(fc.property(\n    fc.array(fc.integer()),\n    fc.func(fc.boolean()),\n    (arr, predicate) => {\n      const pythonStyle = arr.filter(predicate);\n      const convertedResult = convertedFilter(arr, predicate);\n      return arrayEqual(pythonStyle, convertedResult);\n    }\n  ));\n});"
+      }
+    },
+    "snapshot_testing": {
+      "description": "Capture and compare complex outputs",
+      "use_cases": [
+        "Complex object structures",
+        "Generated code output",
+        "Serialized data formats",
+        "API response structures"
+      ],
+      "example": {
+        "code": "test('complex data transformation', () => {\n  const input = loadComplexTestData();\n  const result = convertedTransformation(input);\n  expect(result).toMatchSnapshot();\n});"
+      }
+    },
+    "performance_testing": {
+      "description": "Validate performance characteristics",
+      "metrics": [
+        "Execution time",
+        "Memory usage",
+        "CPU utilization",
+        "Throughput"
+      ],
+      "tools": ["Benchmark.js", "clinic.js", "0x"],
+      "example": {
+        "code": "import Benchmark from 'benchmark';\n\nconst suite = new Benchmark.Suite();\nsuite\n  .add('Python equivalent', () => pythonEquivalent(testData))\n  .add('TypeScript conversion', () => convertedFunction(testData))\n  .on('complete', function() {\n    console.log('Fastest is ' + this.filter('fastest').map('name'));\n  })\n  .run();"
+      }
+    }
+  },
+  "test_data_strategies": {
+    "boundary_values": {
+      "description": "Test edge cases and limits",
+      "categories": [
+        "Empty collections",
+        "Single element collections", 
+        "Maximum size collections",
+        "Null/undefined values",
+        "Extreme numeric values",
+        "Unicode edge cases"
+      ]
+    },
+    "representative_samples": {
+      "description": "Real-world data samples",
+      "sources": [
+        "Production data snapshots",
+        "Synthetic data generators",
+        "Open datasets",
+        "User-generated content samples"
+      ]
+    },
+    "error_conditions": {
+      "description": "Test error handling paths",
+      "categories": [
+        "Invalid input types",
+        "Out-of-range values",
+        "Network failures",
+        "Resource exhaustion",
+        "Permission errors"
+      ]
+    }
+  }
+} 

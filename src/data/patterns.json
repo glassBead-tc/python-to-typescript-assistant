@@ -1,0 +1,297 @@
+{
+  "language_patterns": [
+    {
+      "pythonPattern": "List Comprehension",
+      "description": "Python list comprehension syntax",
+      "typeScriptEquivalent": "Array.map/filter/reduce",
+      "explanation": "Convert list comprehensions to functional array methods",
+      "complexity": "simple",
+      "caveats": ["Less readable for complex expressions", "May need multiple chained calls"],
+      "examples": [
+        {
+          "python": "[x * 2 for x in numbers if x > 0]",
+          "typescript": "numbers.filter(x => x > 0).map(x => x * 2)",
+          "notes": "Split filter and map operations"
+        },
+        {
+          "python": "[item.name for item in items if item.active]",
+          "typescript": "items.filter(item => item.active).map(item => item.name)",
+          "notes": "Property access patterns"
+        },
+        {
+          "python": "[f(x) for x in data if condition(x)]",
+          "typescript": "data.filter(x => condition(x)).map(x => f(x))",
+          "notes": "Function call patterns"
+        }
+      ]
+    },
+    {
+      "pythonPattern": "Dict Comprehension",
+      "description": "Python dictionary comprehension",
+      "typeScriptEquivalent": "Object.fromEntries + Array methods",
+      "explanation": "Use Object.fromEntries with array transformations",
+      "complexity": "moderate",
+      "caveats": ["More verbose", "Consider Map for dynamic keys"],
+      "examples": [
+        {
+          "python": "{k: v * 2 for k, v in items.items() if v > 0}",
+          "typescript": "Object.fromEntries(Object.entries(items).filter(([k, v]) => v > 0).map(([k, v]) => [k, v * 2]))",
+          "notes": "Use Map for better performance with dynamic keys"
+        },
+        {
+          "python": "{item.id: item.name for item in items}",
+          "typescript": "Object.fromEntries(items.map(item => [item.id, item.name]))",
+          "notes": "Simple key-value mapping"
+        }
+      ]
+    },
+    {
+      "pythonPattern": "Set Comprehension",
+      "description": "Python set comprehension",
+      "typeScriptEquivalent": "new Set(Array methods)",
+      "explanation": "Use Set constructor with array transformations",
+      "complexity": "simple",
+      "caveats": ["Set constructor expects iterable"],
+      "examples": [
+        {
+          "python": "{x * 2 for x in numbers if x > 0}",
+          "typescript": "new Set(numbers.filter(x => x > 0).map(x => x * 2))",
+          "notes": "Filter then map, wrap in Set constructor"
+        }
+      ]
+    },
+    {
+      "pythonPattern": "Context Manager (with statement)",
+      "description": "Python context manager pattern",
+      "typeScriptEquivalent": "try/finally or using pattern",
+      "explanation": "Manual resource management or using disposable pattern",
+      "complexity": "complex",
+      "caveats": ["No automatic resource management", "Must remember cleanup"],
+      "examples": [
+        {
+          "python": "with open('file.txt') as f:\n    content = f.read()",
+          "typescript": "const f = await fs.open('file.txt');\ntry {\n  const content = await f.readFile();\n} finally {\n  await f.close();\n}",
+          "notes": "Consider using library wrappers for common patterns"
+        },
+        {
+          "python": "with db.transaction():\n    db.execute(sql)",
+          "typescript": "const transaction = await db.beginTransaction();\ntry {\n  await db.execute(sql);\n  await transaction.commit();\n} catch (error) {\n  await transaction.rollback();\n  throw error;\n}",
+          "notes": "Manual transaction management"
+        }
+      ]
+    },
+    {
+      "pythonPattern": "Multiple Assignment",
+      "description": "Tuple unpacking and multiple assignment",
+      "typeScriptEquivalent": "Destructuring assignment",
+      "explanation": "Use array/object destructuring",
+      "complexity": "simple",
+      "caveats": ["Array destructuring for sequences", "Object destructuring for named values"],
+      "examples": [
+        {
+          "python": "a, b = get_pair()",
+          "typescript": "const [a, b] = getPair();",
+          "notes": "TypeScript destructuring is very similar"
+        },
+        {
+          "python": "x, y, *rest = values",
+          "typescript": "const [x, y, ...rest] = values;",
+          "notes": "Rest syntax for remaining elements"
+        },
+        {
+          "python": "a, b = b, a",
+          "typescript": "[a, b] = [b, a];",
+          "notes": "Swap using array destructuring"
+        }
+      ]
+    },
+    {
+      "pythonPattern": "Generator Expression",
+      "description": "Python generator expressions",
+      "typeScriptEquivalent": "Generator function or Array methods",
+      "explanation": "Convert to generator functions or array methods depending on use",
+      "complexity": "moderate",
+      "caveats": ["Generators have different semantics", "Consider memory implications"],
+      "examples": [
+        {
+          "python": "sum(x * 2 for x in numbers)",
+          "typescript": "numbers.map(x => x * 2).reduce((a, b) => a + b, 0)",
+          "notes": "For immediate consumption, use array methods"
+        },
+        {
+          "python": "(x * 2 for x in numbers)",
+          "typescript": "function* doubled() {\n  for (const x of numbers) {\n    yield x * 2;\n  }\n}",
+          "notes": "For lazy evaluation, use generator function"
+        }
+      ]
+    },
+    {
+      "pythonPattern": "Decorator",
+      "description": "Python function/class decorators",
+      "typeScriptEquivalent": "TypeScript decorators or wrapper functions",
+      "explanation": "Use TypeScript decorators or manual wrapper functions",
+      "complexity": "complex",
+      "caveats": ["TypeScript decorators are experimental", "Different semantics"],
+      "examples": [
+        {
+          "python": "@property\ndef value(self):\n    return self._value",
+          "typescript": "get value() {\n  return this._value;\n}",
+          "notes": "Property decorator becomes getter"
+        },
+        {
+          "python": "@staticmethod\ndef helper():\n    pass",
+          "typescript": "static helper() {\n  // implementation\n}",
+          "notes": "Static method decorator becomes static keyword"
+        }
+      ]
+    },
+    {
+      "pythonPattern": "Exception Handling",
+      "description": "Python try/except patterns",
+      "typeScriptEquivalent": "try/catch with type checking",
+      "explanation": "Convert to try/catch with runtime type checking",
+      "complexity": "moderate",
+      "caveats": ["No typed exceptions in JavaScript", "Must check error types at runtime"],
+      "examples": [
+        {
+          "python": "try:\n    result = risky_operation()\nexcept ValueError as e:\n    handle_value_error(e)",
+          "typescript": "try {\n  const result = riskyOperation();\n} catch (error) {\n  if (error instanceof ValueError) {\n    handleValueError(error);\n  } else {\n    throw error;\n  }\n}",
+          "notes": "Manual error type checking required"
+        }
+      ]
+    },
+    {
+      "pythonPattern": "String Formatting",
+      "description": "Python string formatting patterns",
+      "typeScriptEquivalent": "Template literals or string methods",
+      "explanation": "Use template literals for most cases",
+      "complexity": "simple",
+      "caveats": ["Different format specifier syntax"],
+      "examples": [
+        {
+          "python": "f'Hello {name}, you are {age} years old'",
+          "typescript": "`Hello ${name}, you are ${age} years old`",
+          "notes": "F-strings map directly to template literals"
+        },
+        {
+          "python": "'Value: {:.2f}'.format(number)",
+          "typescript": "`Value: ${number.toFixed(2)}`",
+          "notes": "Format specifiers become method calls"
+        }
+      ]
+    },
+    {
+      "pythonPattern": "Class Definition",
+      "description": "Python class definition patterns",
+      "typeScriptEquivalent": "TypeScript class with types",
+      "explanation": "Convert to TypeScript class with proper typing",
+      "complexity": "moderate",
+      "caveats": ["Different constructor syntax", "No metaclasses"],
+      "examples": [
+        {
+          "python": "class Person:\n    def __init__(self, name: str):\n        self.name = name",
+          "typescript": "class Person {\n  constructor(public name: string) {\n    // TypeScript parameter properties\n  }\n}",
+          "notes": "Parameter properties for concise constructors"
+        }
+      ]
+    },
+    {
+      "pythonPattern": "Dataclass",
+      "description": "Python @dataclass decorator for data structures",
+      "typeScriptEquivalent": "TypeScript interface or class",
+      "explanation": "Convert dataclasses to TypeScript interfaces for pure data or classes for behavior",
+      "complexity": "simple",
+      "caveats": ["Interfaces have no runtime existence", "Classes require manual constructor"],
+      "examples": [
+        {
+          "python": "@dataclass\nclass Person:\n    name: str\n    age: int\n    active: bool = True",
+          "typescript": "interface Person {\n  name: string;\n  age: number;\n  active: boolean;\n}",
+          "notes": "Interface approach for pure data structures"
+        },
+        {
+          "python": "@dataclass\nclass Person:\n    name: str\n    age: int\n    \n    def greet(self) -> str:\n        return f'Hello {self.name}'",
+          "typescript": "class Person {\n  constructor(\n    public name: string,\n    public age: number\n  ) {}\n  \n  greet(): string {\n    return `Hello ${this.name}`;\n  }\n}",
+          "notes": "Class approach when behavior is included"
+        }
+      ],
+      "realWorldUsage": "py-ts-interfaces focuses on dataclass → interface conversion"
+    },
+    {
+      "pythonPattern": "TypedDict",
+      "description": "Python TypedDict for structured dictionaries",
+      "typeScriptEquivalent": "TypeScript interface with optional properties",
+      "explanation": "Convert TypedDict to interfaces with proper optional handling",
+      "complexity": "moderate",
+      "caveats": ["Optional keys in TypedDict vs optional properties in TypeScript", "total=False affects all keys"],
+      "examples": [
+        {
+          "python": "class Movie(TypedDict):\n    title: str\n    year: int\n    sequel: Optional[str]",
+          "typescript": "interface Movie {\n  title: string;\n  year: number;\n  sequel?: string;\n}",
+          "notes": "Optional[T] becomes optional property with ?"
+        },
+        {
+          "python": "class PartialMovie(TypedDict, total=False):\n    title: str\n    year: int",
+          "typescript": "interface PartialMovie {\n  title?: string;\n  year?: number;\n}",
+          "notes": "total=False makes all properties optional"
+        }
+      ],
+      "realWorldUsage": "Common pattern in modern Python APIs"
+    },
+    {
+      "pythonPattern": "Lambda Functions",
+      "description": "Python lambda expressions",
+      "typeScriptEquivalent": "Arrow functions",
+      "explanation": "Direct conversion to arrow functions",
+      "complexity": "simple",
+      "caveats": ["Similar semantics"],
+      "examples": [
+        {
+          "python": "lambda x: x * 2",
+          "typescript": "(x) => x * 2",
+          "notes": "Direct syntactic conversion"
+        },
+        {
+          "python": "lambda x, y: x + y",
+          "typescript": "(x, y) => x + y",
+          "notes": "Multiple parameters work the same"
+        }
+      ]
+    },
+    {
+      "pythonPattern": "Iterator Protocol",
+      "description": "Python iterator and iterable patterns",
+      "typeScriptEquivalent": "Iterators and generators",
+      "explanation": "Use JavaScript iterator protocol",
+      "complexity": "complex",
+      "caveats": ["Different iterator interface", "Symbol.iterator required"],
+      "examples": [
+        {
+          "python": "class Counter:\n    def __iter__(self):\n        return self\n    def __next__(self):\n        # implementation",
+          "typescript": "class Counter implements Iterable<number> {\n  *[Symbol.iterator]() {\n    // generator implementation\n  }\n}",
+          "notes": "Use generator methods for simplicity"
+        }
+      ]
+    }
+  ],
+  "migration_strategies": {
+    "incremental": {
+      "description": "Gradual migration approach",
+      "steps": [
+        "Identify standalone modules",
+        "Convert utilities and helpers first",
+        "Migrate core business logic",
+        "Update integration points",
+        "Remove Python dependencies"
+      ]
+    },
+    "architectural": {
+      "description": "Large-scale architectural considerations",
+      "patterns": [
+        "Microservices approach",
+        "API boundary preservation",
+        "Database layer abstraction",
+        "Configuration management"
+      ]
+    }
+  }
+} 
