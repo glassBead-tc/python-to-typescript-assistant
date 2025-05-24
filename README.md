@@ -13,6 +13,29 @@ Based on research showing that current AI translation approaches achieve only a 
 - **Validation strategies** for ensuring porting correctness
 - **Quality references** with TypeScript best practices for Python developers
 
+## ⚡ Quick Start
+
+Get started immediately with npx - no installation required:
+
+```bash
+# Run the server with npx
+npx python-to-typescript-porting-mcp-server
+```
+
+Then configure your MCP client (like Claude Desktop) to use the server:
+
+```json
+{
+  "mcpServers": {
+    "python-to-typescript-porting": {
+      "command": "npx",
+      "args": ["python-to-typescript-porting-mcp-server"],
+      "env": {}
+    }
+  }
+}
+```
+
 ## 🚀 Features
 
 ### 🛠️ Tools
@@ -63,15 +86,38 @@ Based on research showing that current AI translation approaches achieve only a 
 ### Prerequisites
 
 - Node.js 18+ and npm
-- TypeScript 5.0+
 - An MCP-compatible client (like Claude Desktop)
+
+### Quick Start with NPX (Recommended)
+
+The easiest way to use the server is via npx - no installation required:
+
+```bash
+# Run directly with npx
+npx python-to-typescript-porting-mcp-server
+
+# Or use the shorter command alias
+npx py-to-ts-server
+```
+
+### Install from NPM
+
+```bash
+# Install globally
+npm install -g python-to-typescript-porting-mcp-server
+
+# Run the server
+py-to-ts-server
+```
 
 ### Build from Source
 
+For development or customization:
+
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd python-to-typescript
+git clone https://github.com/glassBead-tc/python-to-typescript-assistant.git
+cd python-to-typescript-assistant
 
 # Install dependencies
 npm install
@@ -87,14 +133,47 @@ npm start
 
 ### Claude Desktop
 
+#### Option 1: Using NPX (Recommended)
+
 Add this configuration to your `claude_desktop_config.json`:
 
 ```json
 {
   "mcpServers": {
     "python-to-typescript-porting": {
+      "command": "npx",
+      "args": ["python-to-typescript-porting-mcp-server"],
+      "env": {}
+    }
+  }
+}
+```
+
+#### Option 2: Using Global Installation
+
+If you installed globally with npm:
+
+```json
+{
+  "mcpServers": {
+    "python-to-typescript-porting": {
+      "command": "py-to-ts-server",
+      "env": {}
+    }
+  }
+}
+```
+
+#### Option 3: Using Local Build
+
+If you built from source:
+
+```json
+{
+  "mcpServers": {
+    "python-to-typescript-porting": {
       "command": "node",
-      "args": ["/path/to/python-to-typescript/dist/index.js"],
+      "args": ["/path/to/python-to-typescript-assistant/dist/index.js"],
       "env": {}
     }
   }
@@ -103,7 +182,7 @@ Add this configuration to your `claude_desktop_config.json`:
 
 ### Other MCP Clients
 
-The server uses stdio transport and can be integrated with any MCP-compatible client that supports subprocess communication.
+The server uses stdio transport and can be integrated with any MCP-compatible client that supports subprocess communication. Use the appropriate command from the options above based on your installation method.
 
 ## 🐳 Docker Support
 
@@ -246,10 +325,22 @@ src/
 
 ## 🔬 Testing
 
-The server includes comprehensive testing strategies:
+### Quick Testing with NPX
 
 ```bash
-# Run the development server
+# Test the server directly
+npx python-to-typescript-porting-mcp-server
+
+# Test with MCP Inspector
+npx @modelcontextprotocol/inspector
+```
+
+### Development Testing
+
+For development and customization:
+
+```bash
+# Run the development server with watch mode
 npm run dev
 
 # Test with MCP Inspector
