@@ -1,0 +1,36 @@
+{
+  "name": "python-to-typescript-porting-server",
+  "version": "1.0.0",
+  "description": "MCP server providing systematic tools and references for Python-to-TypeScript porting",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "python",
+    "typescript",
+    "porting",
+    "migration",
+    "code-translation"
+  ],
+  "author": "AI Development Team",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "chalk": "^5.3.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "bin": {
+    "py-to-ts-server": "./dist/index.js"
+  }
+} 
