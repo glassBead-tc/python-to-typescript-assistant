@@ -1,0 +1,62 @@
+services:
+  # Main MCP Server
+  mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    image: python-to-typescript-mcp-server:latest
+    container_name: py-to-ts-mcp-server
+    restart: unless-stopped
+    # MCP servers typically run on stdio, but we can expose a port for health checks
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    # Health check (optional - adjust based on your server's health endpoint)
+    healthcheck:
+      test: ["CMD", "node", "-e", "process.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Development service with hot reloading
+  mcp-server-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      target: development
+    image: python-to-typescript-mcp-server:dev
+    container_name: py-to-ts-mcp-server-dev
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      # Mount source code for development
+      - ./src:/app/src:ro
+      - ./tsconfig.json:/app/tsconfig.json:ro
+      # Use named volume for node_modules to avoid conflicts
+      - node_modules_dev:/app/node_modules
+    profiles:
+      - dev
+
+volumes:
+  node_modules_dev: 

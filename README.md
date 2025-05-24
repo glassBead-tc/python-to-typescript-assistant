@@ -105,6 +105,54 @@ Add this configuration to your `claude_desktop_config.json`:
 
 The server uses stdio transport and can be integrated with any MCP-compatible client that supports subprocess communication.
 
+## 🐳 Docker Support
+
+The project includes comprehensive Docker support for both development and production environments.
+
+### Quick Start with Docker
+
+```bash
+# Build and run with Docker Compose
+npm run compose:up
+
+# View logs
+npm run compose:logs
+
+# Stop the server
+npm run compose:down
+```
+
+### Development with Docker
+
+```bash
+# Start development environment with hot reloading
+npm run compose:dev
+
+# View development logs
+docker-compose logs -f mcp-server-dev
+```
+
+### Available Docker Scripts
+
+| Script | Description |
+|--------|-------------|
+| `npm run docker:build` | Build production Docker image |
+| `npm run docker:build-dev` | Build development Docker image |
+| `npm run compose:up` | Start production services |
+| `npm run compose:dev` | Start development services |
+| `npm run compose:down` | Stop all services |
+| `npm run compose:logs` | View service logs |
+
+### Docker Features
+
+- **Multi-stage builds** for optimized production images
+- **Development environment** with hot reloading
+- **Health checks** and resource limits
+- **Non-root user** for security
+- **Alpine Linux** base for minimal footprint
+
+For detailed Docker documentation, see [DOCKER.md](DOCKER.md).
+
 ## 🎯 Usage Examples
 
 ### Analyzing a Python Project

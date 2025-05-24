@@ -1,0 +1,37 @@
+# Development Dockerfile for Python-to-TypeScript Porting MCP Server
+FROM node:20-alpine AS base
+
+# Install dumb-init for proper signal handling
+RUN apk add --no-cache dumb-init
+
+# Create app directory
+WORKDIR /app
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S mcpserver -u 1001
+
+# Development stage
+FROM base AS development
+
+# Copy package files
+COPY package*.json ./
+RUN npm ci && npm cache clean --force
+
+# Install development dependencies including nodemon for hot reloading
+RUN npm install -g nodemon tsx
+
+# Copy source code
+COPY . .
+
+# Switch to non-root user
+USER mcpserver
+
+# Expose port
+EXPOSE 3000
+
+# Use dumb-init to handle signals properly
+ENTRYPOINT ["dumb-init", "--"]
+
+# Development command with hot reloading
+CMD ["npm", "run", "dev"] 

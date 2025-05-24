@@ -16,7 +16,15 @@
     "dev": "tsc --watch",
     "start": "node dist/index.js",
     "prepublishOnly": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docker:build": "docker build -t python-to-typescript-mcp-server:latest .",
+    "docker:build-dev": "docker build -f Dockerfile.dev -t python-to-typescript-mcp-server:dev .",
+    "docker:run": "docker run --rm -it python-to-typescript-mcp-server:latest",
+    "docker:run-dev": "docker run --rm -it -p 3001:3000 -v $(pwd)/src:/app/src:ro python-to-typescript-mcp-server:dev",
+    "compose:up": "docker-compose up -d",
+    "compose:down": "docker-compose down",
+    "compose:dev": "docker-compose --profile dev up -d",
+    "compose:logs": "docker-compose logs -f"
   },
   "keywords": [
     "mcp",

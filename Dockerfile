@@ -1,0 +1,45 @@
+# Multi-stage Dockerfile for Python-to-TypeScript Porting MCP Server
+FROM node:20-alpine AS base
+
+# Install dumb-init for proper signal handling
+RUN apk add --no-cache dumb-init
+
+# Create app directory
+WORKDIR /app
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S mcpserver -u 1001
+
+# Stage 1: Dependencies
+FROM base AS deps
+COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
+
+# Stage 2: Build
+FROM base AS build
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Stage 3: Runtime
+FROM base AS runtime
+
+# Copy built application
+COPY --from=build --chown=mcpserver:nodejs /app/dist ./dist
+COPY --from=build --chown=mcpserver:nodejs /app/examples ./examples
+COPY --from=deps --chown=mcpserver:nodejs /app/node_modules ./node_modules
+COPY --chown=mcpserver:nodejs package*.json ./
+
+# Switch to non-root user
+USER mcpserver
+
+# Expose port (though MCP typically runs on stdio)
+EXPOSE 3000
+
+# Use dumb-init to handle signals properly
+ENTRYPOINT ["dumb-init", "--"]
+
+# Default command - run the MCP server
+CMD ["node", "dist/index.js"] 
