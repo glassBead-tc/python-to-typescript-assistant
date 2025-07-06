@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/glassbead-tc-python-to-typescript-assistant-badge.png)](https://mseep.ai/app/glassbead-tc-python-to-typescript-assistant)
+
 # 🐍➡️📘 Python-to-TypeScript Porting MCP Server
 
 [![smithery badge](https://smithery.ai/badge/@glassBead-tc/python-to-typescript-assistant)](https://smithery.ai/server/@glassBead-tc/python-to-typescript-assistant)
