@@ -1,0 +1,322 @@
+{
+  "$schema": "./schemas/performance-benchmarks.schema.json",
+  "version": "2025.01",
+  "generatedAt": "2025-01-10T12:00:00Z",
+  "benchmarks": [
+    {
+      "id": "fibonacci-recursive",
+      "name": "Recursive Fibonacci",
+      "category": "computation",
+      "description": "Calculate fibonacci(35) recursively",
+      "pythonMetrics": {
+        "executionTime": {
+          "value": 3500,
+          "unit": "ms",
+          "stdDev": 150
+        },
+        "memoryUsage": {
+          "value": 50,
+          "unit": "MB",
+          "peak": 75
+        }
+      },
+      "typeScriptMetrics": {
+        "executionTime": {
+          "value": 120,
+          "unit": "ms",
+          "stdDev": 10
+        },
+        "memoryUsage": {
+          "value": 30,
+          "unit": "MB",
+          "peak": 35
+        }
+      },
+      "comparison": {
+        "speedRatio": 29.17,
+        "memoryRatio": 0.6,
+        "analysis": "TypeScript/V8 has superior JIT compilation for recursive functions"
+      },
+      "testConditions": {
+        "pythonVersion": "3.11",
+        "nodeVersion": "20.0",
+        "hardware": "M1 MacBook Pro",
+        "os": "macOS 14.0"
+      }
+    },
+    {
+      "id": "array-operations",
+      "name": "Large Array Operations",
+      "category": "computation",
+      "description": "Map, filter, reduce on 1M element array",
+      "pythonMetrics": {
+        "executionTime": {
+          "value": 850,
+          "unit": "ms",
+          "stdDev": 50
+        },
+        "memoryUsage": {
+          "value": 200,
+          "unit": "MB",
+          "peak": 350
+        }
+      },
+      "typeScriptMetrics": {
+        "executionTime": {
+          "value": 180,
+          "unit": "ms",
+          "stdDev": 20
+        },
+        "memoryUsage": {
+          "value": 150,
+          "unit": "MB",
+          "peak": 200
+        }
+      },
+      "comparison": {
+        "speedRatio": 4.72,
+        "memoryRatio": 0.75,
+        "analysis": "V8's optimized array methods outperform Python list comprehensions"
+      },
+      "testConditions": {
+        "pythonVersion": "3.11",
+        "nodeVersion": "20.0",
+        "hardware": "M1 MacBook Pro",
+        "os": "macOS 14.0"
+      }
+    },
+    {
+      "id": "json-parsing",
+      "name": "JSON Parse/Stringify",
+      "category": "io",
+      "description": "Parse and stringify 10MB JSON file",
+      "pythonMetrics": {
+        "executionTime": {
+          "value": 450,
+          "unit": "ms",
+          "stdDev": 30
+        },
+        "memoryUsage": {
+          "value": 120,
+          "unit": "MB",
+          "peak": 150
+        }
+      },
+      "typeScriptMetrics": {
+        "executionTime": {
+          "value": 85,
+          "unit": "ms",
+          "stdDev": 5
+        },
+        "memoryUsage": {
+          "value": 80,
+          "unit": "MB",
+          "peak": 90
+        }
+      },
+      "comparison": {
+        "speedRatio": 5.29,
+        "memoryRatio": 0.67,
+        "analysis": "Native JSON support in V8 is highly optimized"
+      },
+      "testConditions": {
+        "pythonVersion": "3.11",
+        "nodeVersion": "20.0",
+        "hardware": "M1 MacBook Pro",
+        "os": "macOS 14.0"
+      }
+    },
+    {
+      "id": "regex-matching",
+      "name": "Regular Expression Matching",
+      "category": "computation",
+      "description": "Complex regex on 1MB text",
+      "pythonMetrics": {
+        "executionTime": {
+          "value": 220,
+          "unit": "ms",
+          "stdDev": 15
+        },
+        "memoryUsage": {
+          "value": 25,
+          "unit": "MB",
+          "peak": 30
+        }
+      },
+      "typeScriptMetrics": {
+        "executionTime": {
+          "value": 180,
+          "unit": "ms",
+          "stdDev": 10
+        },
+        "memoryUsage": {
+          "value": 20,
+          "unit": "MB",
+          "peak": 25
+        }
+      },
+      "comparison": {
+        "speedRatio": 1.22,
+        "memoryRatio": 0.8,
+        "analysis": "Similar performance, slight edge to V8's regex engine"
+      },
+      "testConditions": {
+        "pythonVersion": "3.11",
+        "nodeVersion": "20.0",
+        "hardware": "M1 MacBook Pro",
+        "os": "macOS 14.0"
+      }
+    },
+    {
+      "id": "http-server",
+      "name": "HTTP Server Throughput",
+      "category": "io",
+      "description": "Requests per second for simple HTTP server",
+      "pythonMetrics": {
+        "throughput": {
+          "value": 8500,
+          "unit": "req/s"
+        },
+        "executionTime": {
+          "value": 0.12,
+          "unit": "ms",
+          "stdDev": 0.05
+        },
+        "memoryUsage": {
+          "value": 150,
+          "unit": "MB",
+          "peak": 200
+        }
+      },
+      "typeScriptMetrics": {
+        "throughput": {
+          "value": 35000,
+          "unit": "req/s"
+        },
+        "executionTime": {
+          "value": 0.03,
+          "unit": "ms",
+          "stdDev": 0.01
+        },
+        "memoryUsage": {
+          "value": 100,
+          "unit": "MB",
+          "peak": 120
+        }
+      },
+      "comparison": {
+        "speedRatio": 4.12,
+        "memoryRatio": 0.67,
+        "analysis": "Node.js event loop excels at I/O operations"
+      },
+      "testConditions": {
+        "pythonVersion": "3.11 (FastAPI)",
+        "nodeVersion": "20.0 (Express)",
+        "hardware": "M1 MacBook Pro",
+        "os": "macOS 14.0"
+      }
+    },
+    {
+      "id": "startup-time",
+      "name": "Cold Start Time",
+      "category": "startup",
+      "description": "Time to import/require and initialize app",
+      "pythonMetrics": {
+        "executionTime": {
+          "value": 850,
+          "unit": "ms",
+          "stdDev": 100
+        },
+        "memoryUsage": {
+          "value": 35,
+          "unit": "MB",
+          "peak": 40
+        }
+      },
+      "typeScriptMetrics": {
+        "executionTime": {
+          "value": 120,
+          "unit": "ms",
+          "stdDev": 20
+        },
+        "memoryUsage": {
+          "value": 45,
+          "unit": "MB",
+          "peak": 50
+        }
+      },
+      "comparison": {
+        "speedRatio": 7.08,
+        "memoryRatio": 1.29,
+        "analysis": "Node.js has faster startup, Python has smaller initial memory"
+      },
+      "testConditions": {
+        "pythonVersion": "3.11",
+        "nodeVersion": "20.0",
+        "hardware": "M1 MacBook Pro",
+        "os": "macOS 14.0"
+      }
+    },
+    {
+      "id": "concurrent-tasks",
+      "name": "Concurrent I/O Tasks",
+      "category": "concurrency",
+      "description": "Handle 1000 concurrent HTTP requests",
+      "pythonMetrics": {
+        "executionTime": {
+          "value": 2500,
+          "unit": "ms",
+          "stdDev": 200
+        },
+        "memoryUsage": {
+          "value": 250,
+          "unit": "MB",
+          "peak": 400
+        }
+      },
+      "typeScriptMetrics": {
+        "executionTime": {
+          "value": 800,
+          "unit": "ms",
+          "stdDev": 50
+        },
+        "memoryUsage": {
+          "value": 180,
+          "unit": "MB",
+          "peak": 220
+        }
+      },
+      "comparison": {
+        "speedRatio": 3.13,
+        "memoryRatio": 0.72,
+        "analysis": "Event loop model more efficient for concurrent I/O"
+      },
+      "testConditions": {
+        "pythonVersion": "3.11 (asyncio)",
+        "nodeVersion": "20.0",
+        "hardware": "M1 MacBook Pro",
+        "os": "macOS 14.0"
+      }
+    }
+  ],
+  "budgets": {
+    "executionTime": {
+      "target": 100,
+      "warning": 500,
+      "error": 1000,
+      "unit": "ms"
+    },
+    "memoryUsage": {
+      "target": 50,
+      "warning": 200,
+      "error": 500,
+      "unit": "MB"
+    },
+    "bundleSize": {
+      "target": 200,
+      "warning": 500,
+      "error": 1000,
+      "unit": "KB"
+    }
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Error Patterns",
+  "description": "Common pitfalls and recommended fixes in Python to TypeScript migration",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d{4}\\.\\d{2}$"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "patterns": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/errorPattern"
+      }
+    }
+  },
+  "required": ["version", "generatedAt", "patterns"],
+  "definitions": {
+    "errorPattern": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["type-error", "runtime-error", "logic-error", "error-handling", "performance", "security", "compatibility"]
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"]
+        },
+        "description": {
+          "type": "string"
+        },
+        "pythonContext": {
+          "type": "object",
+          "properties": {
+            "pattern": {
+              "type": "string"
+            },
+            "example": {
+              "type": "string"
+            },
+            "explanation": {
+              "type": "string"
+            }
+          },
+          "required": ["pattern", "example"]
+        },
+        "commonMistake": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "issue": {
+              "type": "string"
+            },
+            "symptoms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": ["code", "issue"]
+        },
+        "correctApproach": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "explanation": {
+              "type": "string"
+            },
+            "benefits": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": ["code", "explanation"]
+        },
+        "detection": {
+          "type": "object",
+          "properties": {
+            "astPattern": {
+              "type": "string"
+            },
+            "lintRule": {
+              "type": "string"
+            },
+            "testCase": {
+              "type": "string"
+            }
+          }
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["id", "title", "category", "severity", "pythonContext", "commonMistake", "correctApproach"]
+    }
+  }
+}

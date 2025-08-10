@@ -1,0 +1,267 @@
+{
+  "$schema": "./schemas/error-patterns.schema.json",
+  "version": "2025.01",
+  "generatedAt": "2025-01-10T12:00:00Z",
+  "patterns": [
+    {
+      "id": "mutable-default-args",
+      "title": "Mutable Default Arguments",
+      "category": "logic-error",
+      "severity": "high",
+      "description": "Python's mutable default arguments persist between function calls",
+      "pythonContext": {
+        "pattern": "def\\s+\\w+\\([^)]*=\\s*\\[|def\\s+\\w+\\([^)]*=\\s*\\{",
+        "example": "def append_to_list(item, target=[]):\n    target.append(item)\n    return target",
+        "explanation": "Default mutable arguments are created once and shared between calls"
+      },
+      "commonMistake": {
+        "code": "function appendToList(item: any, target: any[] = []): any[] {\n    target.push(item);\n    return target;\n}",
+        "issue": "Direct translation doesn't capture Python's behavior",
+        "symptoms": [
+          "TypeScript function works correctly (new array each call)",
+          "Different behavior from Python original"
+        ]
+      },
+      "correctApproach": {
+        "code": "// Option 1: Fresh default each time (TypeScript behavior)\nfunction appendToList(item: any, target?: any[]): any[] {\n    const list = target ?? [];\n    list.push(item);\n    return list;\n}\n\n// Option 2: Mimic Python behavior (if needed)\nconst defaultList: any[] = [];\nfunction appendToListPythonStyle(item: any, target?: any[]): any[] {\n    const list = target ?? defaultList;\n    list.push(item);\n    return list;\n}",
+        "explanation": "Choose behavior based on intent, not literal translation",
+        "benefits": [
+          "Clear intent",
+          "Predictable behavior",
+          "Avoids hidden state"
+        ]
+      },
+      "detection": {
+        "astPattern": "FunctionDef[defaults contains List|Dict|Set]",
+        "lintRule": "no-mutable-defaults"
+      },
+      "resources": [
+        "guides://common-pitfalls#mutable-defaults",
+        "typescript://best-practices#pure-functions"
+      ],
+      "tags": ["function", "state", "side-effects"]
+    },
+    {
+      "id": "integer-division",
+      "title": "Integer Division Differences",
+      "category": "logic-error",
+      "severity": "medium",
+      "description": "Python 3 vs Python 2 vs TypeScript division behavior",
+      "pythonContext": {
+        "pattern": "\\d+\\s*/\\s*\\d+|\\w+\\s*/\\s*\\w+",
+        "example": "result = 5 / 2  # Python 3: 2.5, Python 2: 2",
+        "explanation": "Python 3 uses true division by default"
+      },
+      "commonMistake": {
+        "code": "const result = 5 / 2; // Always 2.5 in TypeScript",
+        "issue": "Assuming integer division when translating Python 2 code",
+        "symptoms": [
+          "Unexpected floating point results",
+          "Off-by-one errors in calculations"
+        ]
+      },
+      "correctApproach": {
+        "code": "// For true division (Python 3 behavior)\nconst result = 5 / 2; // 2.5\n\n// For integer division (Python 2 or // operator)\nconst intResult = Math.floor(5 / 2); // 2\n\n// For consistent integer division\nfunction intDiv(a: number, b: number): number {\n    return Math.floor(a / b);\n}",
+        "explanation": "Be explicit about division type needed",
+        "benefits": [
+          "Clear intent",
+          "Cross-version compatibility",
+          "Predictable results"
+        ]
+      },
+      "detection": {
+        "astPattern": "BinOp[op=Div]",
+        "testCase": "assert intDiv(5, 2) === 2"
+      },
+      "resources": [
+        "guides://numeric-operations",
+        "python://division-changes"
+      ],
+      "tags": ["arithmetic", "compatibility"]
+    },
+    {
+      "id": "string-unicode",
+      "title": "String and Unicode Handling",
+      "category": "type-error",
+      "severity": "high",
+      "description": "Python 2 str/unicode vs Python 3 str vs TypeScript string",
+      "pythonContext": {
+        "pattern": "str\\(|unicode\\(|encode\\(|decode\\(",
+        "example": "# Python 2\ntext = u'Hello 世界'\nbytes_text = text.encode('utf-8')\n\n# Python 3\ntext = 'Hello 世界'  # Always unicode\nbytes_text = text.encode('utf-8')",
+        "explanation": "String encoding/decoding differs between Python versions"
+      },
+      "commonMistake": {
+        "code": "// Assuming strings need encoding/decoding\nconst text = 'Hello 世界';\nconst encoded = text.encode('utf-8'); // No encode method!",
+        "issue": "TypeScript strings are always Unicode, no encode/decode",
+        "symptoms": [
+          "Method not found errors",
+          "Confusion about string types"
+        ]
+      },
+      "correctApproach": {
+        "code": "// TypeScript strings are always Unicode\nconst text = 'Hello 世界';\n\n// For binary data, use Buffer (Node.js)\nconst buffer = Buffer.from(text, 'utf-8');\nconst decoded = buffer.toString('utf-8');\n\n// For browser, use TextEncoder/TextDecoder\nconst encoder = new TextEncoder();\nconst decoder = new TextDecoder();\nconst uint8Array = encoder.encode(text);\nconst decodedText = decoder.decode(uint8Array);",
+        "explanation": "Use appropriate APIs for binary/text conversion",
+        "benefits": [
+          "Platform-appropriate solutions",
+          "Clear binary vs text distinction"
+        ]
+      },
+      "detection": {
+        "astPattern": "Call[func.attr in ['encode', 'decode']]"
+      },
+      "resources": [
+        "guides://string-handling",
+        "typescript://text-encoding"
+      ],
+      "tags": ["strings", "encoding", "unicode"]
+    },
+    {
+      "id": "exception-handling",
+      "title": "Exception Type Differences",
+      "category": "error-handling",
+      "severity": "high",
+      "description": "Python exception hierarchy vs JavaScript/TypeScript errors",
+      "pythonContext": {
+        "pattern": "except\\s+\\w+:|raise\\s+\\w+",
+        "example": "try:\n    value = dict['key']\nexcept KeyError:\n    value = default\nexcept (ValueError, TypeError) as e:\n    log_error(e)",
+        "explanation": "Python has rich exception hierarchy"
+      },
+      "commonMistake": {
+        "code": "try {\n    const value = dict['key'];\n} catch (KeyError) { // No KeyError in JS!\n    value = defaultValue;\n}",
+        "issue": "JavaScript has limited error types",
+        "symptoms": [
+          "Catch blocks never execute",
+          "All errors caught by generic catch"
+        ]
+      },
+      "correctApproach": {
+        "code": "// Option 1: Check property existence\nconst value = dict['key'] ?? defaultValue;\n\n// Option 2: Custom error classes\nclass KeyError extends Error {\n    constructor(key: string) {\n        super(`Key not found: ${key}`);\n        this.name = 'KeyError';\n    }\n}\n\n// Option 3: Error discrimination\ntry {\n    // code that might throw\n} catch (error) {\n    if (error instanceof TypeError) {\n        // handle type error\n    } else if (error.message.includes('not found')) {\n        // handle missing key\n    } else {\n        throw error; // re-throw unknown errors\n    }\n}",
+        "explanation": "Use appropriate error handling patterns for JavaScript",
+        "benefits": [
+          "Proper error discrimination",
+          "Custom error types when needed",
+          "Defensive programming"
+        ]
+      },
+      "detection": {
+        "astPattern": "ExceptHandler[type not in standard_js_errors]"
+      },
+      "resources": [
+        "guides://error-handling",
+        "typescript://custom-errors"
+      ],
+      "tags": ["exceptions", "error-handling"]
+    },
+    {
+      "id": "variable-scoping",
+      "title": "Variable Scoping Differences",
+      "category": "logic-error",
+      "severity": "medium",
+      "description": "Python vs JavaScript/TypeScript scoping rules",
+      "pythonContext": {
+        "pattern": "for\\s+\\w+\\s+in|if\\s+.*:|while\\s+.*:",
+        "example": "for i in range(10):\n    pass\nprint(i)  # i is still accessible, equals 9",
+        "explanation": "Python variables leak from blocks"
+      },
+      "commonMistake": {
+        "code": "for (let i = 0; i < 10; i++) {\n    // ...\n}\nconsole.log(i); // Error: i is not defined",
+        "issue": "TypeScript has block scoping with let/const",
+        "symptoms": [
+          "Reference errors",
+          "Undefined variable errors"
+        ]
+      },
+      "correctApproach": {
+        "code": "// Option 1: Declare outside if needed after loop\nlet i: number;\nfor (i = 0; i < 10; i++) {\n    // ...\n}\nconsole.log(i); // i is accessible\n\n// Option 2: Use appropriate scoping\nlet lastValue: number | undefined;\nfor (let i = 0; i < 10; i++) {\n    lastValue = i;\n}\nif (lastValue !== undefined) {\n    console.log(lastValue);\n}",
+        "explanation": "Be explicit about variable scope and lifetime",
+        "benefits": [
+          "Clear variable lifetime",
+          "Prevents scope-related bugs",
+          "Better encapsulation"
+        ]
+      },
+      "detection": {
+        "astPattern": "Name[ctx=Load, id used outside defining block]"
+      },
+      "resources": [
+        "guides://scoping-rules",
+        "typescript://let-const-var"
+      ],
+      "tags": ["scoping", "variables", "blocks"]
+    },
+    {
+      "id": "truthiness",
+      "title": "Truthiness and Falsy Values",
+      "category": "logic-error",
+      "severity": "high",
+      "description": "Different falsy values between Python and JavaScript",
+      "pythonContext": {
+        "pattern": "if\\s+\\w+:|while\\s+\\w+:|\\w+\\s+or\\s+\\w+|not\\s+\\w+",
+        "example": "# Python falsy: None, False, 0, '', [], {}, ()\nif not my_list:\n    print('List is empty')",
+        "explanation": "Python and JavaScript have different falsy values"
+      },
+      "commonMistake": {
+        "code": "// Direct translation can be wrong\nif (!myList) { // Also true for null, undefined!\n    console.log('List is empty');\n}",
+        "issue": "JavaScript has different falsy values",
+        "symptoms": [
+          "Unexpected conditional behavior",
+          "Null/undefined not handled correctly"
+        ]
+      },
+      "correctApproach": {
+        "code": "// Be explicit about what you're checking\n\n// Check for empty array\nif (myList.length === 0) {\n    console.log('List is empty');\n}\n\n// Check for null/undefined\nif (myList == null) {\n    console.log('List is null or undefined');\n}\n\n// Check for existence and non-empty\nif (myList && myList.length > 0) {\n    console.log('List exists and has items');\n}\n\n// Python-like truthiness helper\nfunction isTruthy(value: any): boolean {\n    if (value == null || value === false) return false;\n    if (typeof value === 'number') return value !== 0;\n    if (typeof value === 'string') return value !== '';\n    if (Array.isArray(value)) return value.length > 0;\n    if (typeof value === 'object') return Object.keys(value).length > 0;\n    return true;\n}",
+        "explanation": "Be explicit about truthiness checks",
+        "benefits": [
+          "Clear intent",
+          "Avoids subtle bugs",
+          "Handles edge cases"
+        ]
+      },
+      "detection": {
+        "astPattern": "UnaryOp[op=Not] | BoolOp[op=Or|And]"
+      },
+      "resources": [
+        "guides://truthiness",
+        "javascript://falsy-values"
+      ],
+      "tags": ["conditionals", "truthiness", "type-coercion"]
+    },
+    {
+      "id": "import-side-effects",
+      "title": "Import Side Effects",
+      "category": "runtime-error",
+      "severity": "high",
+      "description": "Python imports can have side effects, TypeScript imports are hoisted",
+      "pythonContext": {
+        "pattern": "import\\s+\\w+|from\\s+\\w+\\s+import",
+        "example": "# Python - imports execute code\nprint('Starting import')\nimport heavy_module  # Runs heavy_module's top-level code\nprint('Import complete')",
+        "explanation": "Python executes module code on import"
+      },
+      "commonMistake": {
+        "code": "// Assuming import order matters for initialization\nconsole.log('Before import');\nimport { heavyModule } from './heavy'; // Hoisted!\nconsole.log('After import'); // This runs AFTER heavy module",
+        "issue": "TypeScript imports are hoisted to top",
+        "symptoms": [
+          "Initialization order issues",
+          "Undefined variables at runtime"
+        ]
+      },
+      "correctApproach": {
+        "code": "// Option 1: Use dynamic imports for control\nconsole.log('Before import');\nconst { heavyModule } = await import('./heavy');\nconsole.log('After import');\n\n// Option 2: Initialization functions\nimport { initializeHeavyModule } from './heavy';\nconsole.log('Before init');\nawait initializeHeavyModule();\nconsole.log('After init');\n\n// Option 3: Module pattern with explicit init\nexport class HeavyModule {\n    private static initialized = false;\n    \n    static initialize() {\n        if (!this.initialized) {\n            // Heavy initialization here\n            this.initialized = true;\n        }\n    }\n}",
+        "explanation": "Control initialization explicitly",
+        "benefits": [
+          "Predictable initialization order",
+          "Better performance control",
+          "Clear dependencies"
+        ]
+      },
+      "detection": {
+        "astPattern": "ImportFrom | Import"
+      },
+      "resources": [
+        "guides://module-patterns",
+        "typescript://module-initialization"
+      ],
+      "tags": ["imports", "modules", "initialization"]
+    }
+  ]
+}

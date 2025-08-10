@@ -1,0 +1,166 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Performance Benchmarks",
+  "description": "Expected performance characteristics and budgets for Python vs TypeScript",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d{4}\\.\\d{2}$"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "benchmarks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/benchmark"
+      }
+    },
+    "budgets": {
+      "type": "object",
+      "properties": {
+        "executionTime": {
+          "$ref": "#/definitions/budget"
+        },
+        "memoryUsage": {
+          "$ref": "#/definitions/budget"
+        },
+        "bundleSize": {
+          "$ref": "#/definitions/budget"
+        }
+      }
+    }
+  },
+  "required": ["version", "generatedAt", "benchmarks"],
+  "definitions": {
+    "benchmark": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["computation", "io", "memory", "concurrency", "startup", "bundling"]
+        },
+        "description": {
+          "type": "string"
+        },
+        "pythonMetrics": {
+          "$ref": "#/definitions/metrics"
+        },
+        "typeScriptMetrics": {
+          "$ref": "#/definitions/metrics"
+        },
+        "comparison": {
+          "type": "object",
+          "properties": {
+            "speedRatio": {
+              "type": "number",
+              "description": "TypeScript speed / Python speed"
+            },
+            "memoryRatio": {
+              "type": "number",
+              "description": "TypeScript memory / Python memory"
+            },
+            "analysis": {
+              "type": "string"
+            }
+          }
+        },
+        "testConditions": {
+          "type": "object",
+          "properties": {
+            "pythonVersion": {
+              "type": "string"
+            },
+            "nodeVersion": {
+              "type": "string"
+            },
+            "hardware": {
+              "type": "string"
+            },
+            "os": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": ["id", "name", "category", "pythonMetrics", "typeScriptMetrics"]
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "executionTime": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "type": "string",
+              "enum": ["ms", "s", "min"]
+            },
+            "stdDev": {
+              "type": "number"
+            }
+          },
+          "required": ["value", "unit"]
+        },
+        "memoryUsage": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "type": "string",
+              "enum": ["KB", "MB", "GB"]
+            },
+            "peak": {
+              "type": "number"
+            }
+          },
+          "required": ["value", "unit"]
+        },
+        "throughput": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "number"
+        },
+        "warning": {
+          "type": "number"
+        },
+        "error": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string"
+        }
+      },
+      "required": ["target", "warning", "error", "unit"]
+    }
+  }
+}

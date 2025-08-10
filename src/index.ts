@@ -12,11 +12,17 @@ import { registerPatternMappingTool } from "./tools/pattern-mapping.js";
 import { registerValidationTool } from "./tools/validation.js";
 import { registerNotebookPortingTool } from "./tools/notebook-porting.js";
 import { registerEphemeralSrcbooksTool, cleanupEphemeralSrcbooks } from "./tools/ephemeral-srcbooks.js";
+import { registerExecuteNotebookCellTool, scheduleCleanup } from "./tools/execute-notebook-cell.js";
+import { registerDifferentialTestTool } from "./tools/differential-test.js";
+import { registerPythonAstAnalyzeTool } from "./tools/python-ast-analyze.js";
 import { registerTypeScriptReferences } from "./resources/typescript-references.js";
 import { registerPortingGuides } from "./resources/porting-guides.js";
 import { registerLibraryDatabase } from "./resources/library-database.js";
 import { registerExampleSrcbooks } from "./resources/example-srcbooks.js";
+import { registerServerCapabilities, registerSystemStatus } from "./resources/server-capabilities.js";
+import { registerHybridArchitectures } from "./resources/hybrid-architectures.js";
 import { registerPortingPrompts } from "./prompts/porting-prompts.js";
+import { registerWorkflowPrompts } from "./prompts/workflows.js";
 
 /**
  * Python-to-TypeScript Porting MCP Server (Python 3.9+ Optimized)
@@ -45,7 +51,7 @@ async function createServer(): Promise<McpServer> {
   const server = new McpServer(
     {
       name: "python-to-typescript-porting-server-py39plus",
-      version: "1.0.0",
+      version: "1.3.0",
     },
     {
       capabilities: {
@@ -84,7 +90,7 @@ Access the TypeScript references for best practices and the porting guides for s
   console.error(chalk.cyan("🐍➡️📘 Python-to-TypeScript Porting MCP Server (Python 3.9+ Optimized)"));
   console.error(chalk.gray("Initializing Python 3.9+ optimized porting tools and references..."));
 
-  // Register all capabilities
+  // Register all tools
   await registerPortingStrategyTool(server);
   await registerTypeAnalysisTool(server);
   await registerLibraryMappingTool(server);
@@ -93,12 +99,26 @@ Access the TypeScript references for best practices and the porting guides for s
   await registerNotebookPortingTool(server);
   await registerEphemeralSrcbooksTool(server);
   
+  // Register new tools
+  await registerExecuteNotebookCellTool(server);
+  await registerDifferentialTestTool(server);
+  await registerPythonAstAnalyzeTool(server);
+  scheduleCleanup(); // Schedule cleanup for notebook execution
+  
+  // Register resources
   await registerTypeScriptReferences(server);
   await registerPortingGuides(server);
   await registerLibraryDatabase(server);
   await registerExampleSrcbooks(server);
   
+  // Register new resources
+  await registerServerCapabilities(server);
+  await registerSystemStatus(server);
+  await registerHybridArchitectures(server);
+  
+  // Register prompts
   await registerPortingPrompts(server);
+  await registerWorkflowPrompts(server);
 
   console.error(chalk.green("✅ Server initialized with Python 3.9+ optimized porting capabilities"));
   
@@ -111,8 +131,9 @@ async function main() {
     
     const transport = new StdioServerTransport();
     transport.onclose = async () => {
-      console.error(chalk.yellow("🔌 Transport closed. Cleaning up ephemeral srcbooks..."));
+      console.error(chalk.yellow("🔌 Transport closed. Cleaning up..."));
       await cleanupEphemeralSrcbooks();
+      // Notebook cleanup is handled by process.on('beforeExit') in execute-notebook-cell.ts
       console.error(chalk.yellow("🔌 Exiting."));
       process.exit(0);
     };

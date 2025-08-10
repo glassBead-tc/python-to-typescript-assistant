@@ -1,0 +1,151 @@
+{
+  "$schema": "./schemas/migration-templates.schema.json",
+  "version": "2025.01",
+  "generatedAt": "2025-01-10T12:00:00Z",
+  "templates": [
+    {
+      "id": "class-to-class",
+      "name": "Python Class to TypeScript Class",
+      "category": "class",
+      "description": "Convert Python class with init and methods to TypeScript class",
+      "pythonPattern": "class\\s+\\w+.*:",
+      "before": {
+        "code": "class User:\n    def __init__(self, name: str, age: int):\n        self.name = name\n        self.age = age\n    \n    def greet(self) -> str:\n        return f'Hello, {self.name}'",
+        "language": "python",
+        "description": "Python class with constructor and method"
+      },
+      "after": {
+        "code": "class User {\n    constructor(\n        public name: string,\n        public age: number\n    ) {}\n    \n    greet(): string {\n        return `Hello, ${this.name}`;\n    }\n}",
+        "language": "typescript",
+        "description": "TypeScript class with constructor and method"
+      },
+      "transformationRules": [
+        {
+          "rule": "__init__ becomes constructor",
+          "explanation": "Python's __init__ method maps to TypeScript's constructor"
+        },
+        {
+          "rule": "self parameter removed",
+          "explanation": "TypeScript uses 'this' implicitly, no need for self parameter"
+        },
+        {
+          "rule": "Type annotations converted",
+          "explanation": "Python type hints convert to TypeScript type annotations"
+        }
+      ],
+      "tags": ["oop", "class", "constructor"]
+    },
+    {
+      "id": "decorator-to-decorator",
+      "name": "Python Decorator to TypeScript Decorator",
+      "category": "decorator",
+      "description": "Convert Python decorator to TypeScript decorator",
+      "pythonPattern": "@\\w+",
+      "before": {
+        "code": "def timing_decorator(func):\n    def wrapper(*args, **kwargs):\n        start = time.time()\n        result = func(*args, **kwargs)\n        end = time.time()\n        print(f'{func.__name__} took {end-start}s')\n        return result\n    return wrapper\n\n@timing_decorator\ndef slow_function():\n    time.sleep(1)\n    return 'done'",
+        "language": "python",
+        "description": "Python timing decorator"
+      },
+      "after": {
+        "code": "function timingDecorator(\n    target: any,\n    propertyKey: string,\n    descriptor: PropertyDescriptor\n) {\n    const originalMethod = descriptor.value;\n    descriptor.value = async function(...args: any[]) {\n        const start = Date.now();\n        const result = await originalMethod.apply(this, args);\n        const end = Date.now();\n        console.log(`${propertyKey} took ${end - start}ms`);\n        return result;\n    };\n    return descriptor;\n}\n\nclass Example {\n    @timingDecorator\n    async slowFunction(): Promise<string> {\n        await new Promise(resolve => setTimeout(resolve, 1000));\n        return 'done';\n    }\n}",
+        "language": "typescript",
+        "description": "TypeScript method decorator"
+      },
+      "transformationRules": [
+        {
+          "rule": "Function decorator becomes method decorator",
+          "explanation": "TypeScript decorators work on class members"
+        },
+        {
+          "rule": "Wrapper pattern preserved",
+          "explanation": "The wrapper function pattern is maintained in TypeScript"
+        }
+      ],
+      "tags": ["decorator", "meta-programming"]
+    },
+    {
+      "id": "context-manager",
+      "name": "Python Context Manager to TypeScript Pattern",
+      "category": "context-manager",
+      "description": "Convert Python context manager to TypeScript equivalent",
+      "pythonPattern": "with\\s+.*:",
+      "before": {
+        "code": "class FileManager:\n    def __init__(self, filename, mode):\n        self.filename = filename\n        self.mode = mode\n        self.file = None\n    \n    def __enter__(self):\n        self.file = open(self.filename, self.mode)\n        return self.file\n    \n    def __exit__(self, exc_type, exc_val, exc_tb):\n        self.file.close()\n\nwith FileManager('test.txt', 'r') as f:\n    content = f.read()",
+        "language": "python",
+        "description": "Python context manager for file handling"
+      },
+      "after": {
+        "code": "class FileManager {\n    private file: FileHandle | null = null;\n    \n    constructor(\n        private filename: string,\n        private mode: string\n    ) {}\n    \n    async use<T>(\n        callback: (file: FileHandle) => Promise<T>\n    ): Promise<T> {\n        try {\n            this.file = await fs.open(this.filename, this.mode);\n            return await callback(this.file);\n        } finally {\n            if (this.file) {\n                await this.file.close();\n            }\n        }\n    }\n}\n\n// Usage\nconst manager = new FileManager('test.txt', 'r');\nconst content = await manager.use(async (file) => {\n    return await file.readFile({ encoding: 'utf8' });\n});",
+        "language": "typescript",
+        "description": "TypeScript pattern using try/finally with callback"
+      },
+      "transformationRules": [
+        {
+          "rule": "__enter__/__exit__ becomes try/finally",
+          "explanation": "TypeScript uses try/finally blocks for resource management"
+        },
+        {
+          "rule": "Callback pattern for scoped usage",
+          "explanation": "Use callback to ensure resource cleanup"
+        }
+      ],
+      "tags": ["context-manager", "resource-management"]
+    },
+    {
+      "id": "list-comprehension",
+      "name": "Python List Comprehension to TypeScript",
+      "category": "data-structure",
+      "description": "Convert Python list comprehension to TypeScript array methods",
+      "pythonPattern": "\\[.*for.*in.*\\]",
+      "before": {
+        "code": "# Simple comprehension\nnumbers = [x * 2 for x in range(10)]\n\n# With condition\nevens = [x for x in range(20) if x % 2 == 0]\n\n# Nested comprehension\nmatrix = [[i * j for j in range(3)] for i in range(3)]",
+        "language": "python",
+        "description": "Python list comprehensions"
+      },
+      "after": {
+        "code": "// Simple comprehension\nconst numbers = Array.from({ length: 10 }, (_, x) => x * 2);\n\n// With condition\nconst evens = Array.from({ length: 20 }, (_, x) => x)\n    .filter(x => x % 2 === 0);\n\n// Nested comprehension\nconst matrix = Array.from({ length: 3 }, (_, i) =>\n    Array.from({ length: 3 }, (_, j) => i * j)\n);",
+        "language": "typescript",
+        "description": "TypeScript array methods"
+      },
+      "transformationRules": [
+        {
+          "rule": "List comprehension to Array.from or map/filter",
+          "explanation": "TypeScript uses Array methods for transformations"
+        },
+        {
+          "rule": "range() to Array.from with length",
+          "explanation": "Create arrays with specified length using Array.from"
+        }
+      ],
+      "tags": ["array", "comprehension", "functional"]
+    },
+    {
+      "id": "async-await",
+      "name": "Python Async/Await to TypeScript",
+      "category": "async",
+      "description": "Convert Python async/await patterns to TypeScript",
+      "pythonPattern": "async\\s+def",
+      "before": {
+        "code": "import asyncio\nimport aiohttp\n\nasync def fetch_data(url: str) -> dict:\n    async with aiohttp.ClientSession() as session:\n        async with session.get(url) as response:\n            return await response.json()\n\nasync def main():\n    urls = ['http://api1.com', 'http://api2.com']\n    results = await asyncio.gather(\n        *[fetch_data(url) for url in urls]\n    )\n    return results\n\nasyncio.run(main())",
+        "language": "python",
+        "description": "Python async/await with concurrent requests"
+      },
+      "after": {
+        "code": "async function fetchData(url: string): Promise<any> {\n    const response = await fetch(url);\n    return await response.json();\n}\n\nasync function main(): Promise<any[]> {\n    const urls = ['http://api1.com', 'http://api2.com'];\n    const results = await Promise.all(\n        urls.map(url => fetchData(url))\n    );\n    return results;\n}\n\n// Run\nmain().then(results => console.log(results));",
+        "language": "typescript",
+        "description": "TypeScript async/await with Promise.all"
+      },
+      "transformationRules": [
+        {
+          "rule": "asyncio.gather to Promise.all",
+          "explanation": "TypeScript uses Promise.all for concurrent async operations"
+        },
+        {
+          "rule": "aiohttp to fetch API",
+          "explanation": "Use fetch API or axios for HTTP requests"
+        }
+      ],
+      "tags": ["async", "concurrent", "http"]
+    }
+  ]
+}
