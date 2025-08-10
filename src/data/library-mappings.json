@@ -1,4 +1,7 @@
 {
+  "$schema": "./schemas/library-mappings.schema.json",
+  "version": "2025.01",
+  "generatedAt": "2025-01-10T12:00:00Z",
   "web_frameworks": {
     "flask": {
       "pythonLibrary": "flask",
@@ -174,6 +177,53 @@
       "migrationComplexity": "simple",
       "recommendations": ["Axios for similarity to requests", "Fetch for standards compliance", "Got for advanced features"],
       "architecturalConsiderations": ["Promise handling required", "Error handling patterns differ", "Streaming differences"]
+    }
+  },
+  "wasm_bridges": {
+    "pyodide": {
+      "name": "Pyodide",
+      "description": "Python interpreter compiled to WebAssembly, runs Python code in browser/Node.js",
+      "pythonSupport": ["numpy", "pandas", "scipy", "matplotlib", "scikit-learn"],
+      "performance": "moderate",
+      "limitations": [
+        "Large initial download size (>20MB)",
+        "No threading support",
+        "Limited C extension compatibility",
+        "Browser memory constraints"
+      ]
+    },
+    "transcrypt": {
+      "name": "Transcrypt",
+      "description": "Python to JavaScript transpiler with minimal runtime",
+      "pythonSupport": ["core-python", "limited-stdlib"],
+      "performance": "near-native",
+      "limitations": [
+        "No dynamic features",
+        "Limited library support",
+        "Compile-time transpilation required"
+      ]
+    },
+    "skulpt": {
+      "name": "Skulpt",
+      "description": "Python interpreter in JavaScript for educational purposes",
+      "pythonSupport": ["python2", "python3-partial"],
+      "performance": "slow",
+      "limitations": [
+        "Educational focus",
+        "Limited library support",
+        "Performance not suitable for production"
+      ]
+    },
+    "brython": {
+      "name": "Brython",
+      "description": "Python 3 implementation for client-side web programming",
+      "pythonSupport": ["python3", "browser-apis"],
+      "performance": "moderate",
+      "limitations": [
+        "Browser-only",
+        "Custom module system",
+        "Limited third-party library support"
+      ]
     }
   }
 } 

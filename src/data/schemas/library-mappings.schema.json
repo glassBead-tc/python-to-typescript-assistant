@@ -1,0 +1,181 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Library Mappings",
+  "description": "Python to TypeScript library mappings with version annotations",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Schema reference"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d{4}\\.\\d{2}$",
+      "description": "Version in YYYY.MM format"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of generation"
+    },
+    "web_frameworks": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/libraryMapping"
+      }
+    },
+    "data_processing": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/libraryMapping"
+      }
+    },
+    "testing": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/libraryMapping"
+      }
+    },
+    "databases": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/libraryMapping"
+      }
+    },
+    "http_clients": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/libraryMapping"
+      }
+    },
+    "utilities": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/libraryMapping"
+      }
+    },
+    "wasm_bridges": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/wasmBridge"
+      }
+    }
+  },
+  "required": ["version", "generatedAt"],
+  "definitions": {
+    "libraryMapping": {
+      "type": "object",
+      "properties": {
+        "pythonLibrary": {
+          "type": "string"
+        },
+        "typeScriptEquivalents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "package": {
+                "type": "string"
+              },
+              "npm": {
+                "type": "string"
+              },
+              "confidence": {
+                "type": "string",
+                "enum": ["high", "medium", "low"]
+              },
+              "compatibility": {
+                "type": "string",
+                "enum": ["full", "partial", "wrapper", "alternative"]
+              },
+              "notes": {
+                "oneOf": [
+                  {"type": "string"},
+                  {"type": "array", "items": {"type": "string"}}
+                ]
+              },
+              "installCommand": {
+                "type": "string"
+              },
+              "apiDifferences": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "migrationGuide": {
+                "type": "string"
+              }
+            },
+            "required": ["name"]
+          }
+        },
+        "migrationNotes": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "migrationComplexity": {
+          "type": "string"
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "architecturalConsiderations": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "python": {
+                "type": "string"
+              },
+              "typescript": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "required": ["python", "typescript"]
+          }
+        }
+      },
+      "required": ["pythonLibrary", "typeScriptEquivalents"]
+    },
+    "wasmBridge": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "pythonSupport": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "performance": {
+          "type": "string",
+          "enum": ["native", "near-native", "moderate", "slow"]
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["name", "description", "pythonSupport", "performance"]
+    }
+  }
+}

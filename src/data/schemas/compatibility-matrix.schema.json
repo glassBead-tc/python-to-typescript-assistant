@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Compatibility Matrix",
+  "description": "Python to TypeScript feature compatibility with constraints",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d{4}\\.\\d{2}$"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/featureCompatibility"
+      }
+    }
+  },
+  "required": ["version", "generatedAt", "features"],
+  "definitions": {
+    "featureCompatibility": {
+      "type": "object",
+      "properties": {
+        "pythonFeature": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["language", "stdlib", "typing", "async", "meta-programming", "data-model"]
+        },
+        "typeScriptSupport": {
+          "type": "string",
+          "enum": ["native", "library", "workaround", "unsupported", "partial"]
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "implementation": {
+          "type": "object",
+          "properties": {
+            "approach": {
+              "type": "string"
+            },
+            "codeExample": {
+              "type": "string"
+            },
+            "requiredLibraries": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "performanceImpact": {
+          "type": "string",
+          "enum": ["none", "minimal", "moderate", "significant"]
+        },
+        "migrationComplexity": {
+          "type": "string",
+          "enum": ["trivial", "simple", "moderate", "complex", "very-complex"]
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "required": ["pythonFeature", "category", "typeScriptSupport", "migrationComplexity"]
+    }
+  }
+}

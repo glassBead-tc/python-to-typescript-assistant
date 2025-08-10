@@ -1,0 +1,205 @@
+{
+  "$schema": "./schemas/compatibility-matrix.schema.json",
+  "version": "2025.01",
+  "generatedAt": "2025-01-10T12:00:00Z",
+  "features": [
+    {
+      "pythonFeature": "Multiple Inheritance",
+      "category": "language",
+      "typeScriptSupport": "workaround",
+      "constraints": [
+        "TypeScript only supports single inheritance",
+        "Use mixins or composition for multiple inheritance patterns"
+      ],
+      "implementation": {
+        "approach": "Use mixins or interfaces",
+        "codeExample": "type Constructor<T = {}> = new (...args: any[]) => T;\nfunction Mixin1<T extends Constructor>(Base: T) { return class extends Base { ... } }",
+        "requiredLibraries": []
+      },
+      "performanceImpact": "minimal",
+      "migrationComplexity": "complex",
+      "notes": "Requires architectural redesign in most cases"
+    },
+    {
+      "pythonFeature": "Metaclasses",
+      "category": "meta-programming",
+      "typeScriptSupport": "unsupported",
+      "constraints": [
+        "No direct equivalent in TypeScript",
+        "Must refactor to use decorators or factory patterns"
+      ],
+      "implementation": {
+        "approach": "Use decorator pattern or factory functions",
+        "codeExample": "function createClass(config: ClassConfig) { return class { ... } }",
+        "requiredLibraries": []
+      },
+      "performanceImpact": "none",
+      "migrationComplexity": "very-complex",
+      "notes": "Fundamental paradigm difference requires redesign"
+    },
+    {
+      "pythonFeature": "Dynamic Typing",
+      "category": "typing",
+      "typeScriptSupport": "partial",
+      "constraints": [
+        "TypeScript is statically typed",
+        "Can use 'any' type but loses type safety"
+      ],
+      "implementation": {
+        "approach": "Use union types, generics, or 'unknown' type",
+        "codeExample": "function process(value: string | number | boolean) { ... }",
+        "requiredLibraries": []
+      },
+      "performanceImpact": "none",
+      "migrationComplexity": "moderate",
+      "notes": "Better to embrace static typing for maintainability"
+    },
+    {
+      "pythonFeature": "List Comprehensions",
+      "category": "language",
+      "typeScriptSupport": "library",
+      "constraints": [
+        "No native syntax support",
+        "Use array methods instead"
+      ],
+      "implementation": {
+        "approach": "Use map, filter, reduce",
+        "codeExample": "const result = array.filter(x => x > 0).map(x => x * 2)",
+        "requiredLibraries": []
+      },
+      "performanceImpact": "minimal",
+      "migrationComplexity": "simple",
+      "notes": "Array methods are idiomatic in TypeScript"
+    },
+    {
+      "pythonFeature": "Generators",
+      "category": "language",
+      "typeScriptSupport": "native",
+      "constraints": [],
+      "implementation": {
+        "approach": "Use function* syntax",
+        "codeExample": "function* fibonacci() { let [a, b] = [0, 1]; while (true) { yield a; [a, b] = [b, a + b]; } }",
+        "requiredLibraries": []
+      },
+      "performanceImpact": "none",
+      "migrationComplexity": "trivial",
+      "notes": "Direct syntax mapping available"
+    },
+    {
+      "pythonFeature": "Context Managers",
+      "category": "language",
+      "typeScriptSupport": "workaround",
+      "constraints": [
+        "No with statement equivalent",
+        "Must use try/finally or callback patterns"
+      ],
+      "implementation": {
+        "approach": "Use try/finally or RAII pattern",
+        "codeExample": "try { const resource = acquire(); ... } finally { resource.release(); }",
+        "requiredLibraries": []
+      },
+      "performanceImpact": "none",
+      "migrationComplexity": "moderate",
+      "notes": "Consider using async/await with finally blocks"
+    },
+    {
+      "pythonFeature": "Decorators",
+      "category": "meta-programming",
+      "typeScriptSupport": "native",
+      "constraints": [
+        "Different syntax and capabilities",
+        "Stage 3 proposal, requires experimental flag"
+      ],
+      "implementation": {
+        "approach": "Use TypeScript decorators",
+        "codeExample": "function log(target: any, key: string, descriptor: PropertyDescriptor) { ... }",
+        "requiredLibraries": []
+      },
+      "performanceImpact": "minimal",
+      "migrationComplexity": "moderate",
+      "notes": "Syntax differs but concept is similar"
+    },
+    {
+      "pythonFeature": "asyncio",
+      "category": "async",
+      "typeScriptSupport": "native",
+      "constraints": [
+        "Different event loop model",
+        "Promise-based instead of coroutine-based"
+      ],
+      "implementation": {
+        "approach": "Use async/await with Promises",
+        "codeExample": "async function fetchData(): Promise<Data> { return await fetch(url).then(r => r.json()); }",
+        "requiredLibraries": []
+      },
+      "performanceImpact": "none",
+      "migrationComplexity": "simple",
+      "notes": "TypeScript async/await is more straightforward"
+    },
+    {
+      "pythonFeature": "Duck Typing",
+      "category": "typing",
+      "typeScriptSupport": "partial",
+      "constraints": [
+        "TypeScript uses structural typing",
+        "More strict than Python's duck typing"
+      ],
+      "implementation": {
+        "approach": "Use interfaces and structural typing",
+        "codeExample": "interface Quackable { quack(): void; } function makeItQuack(duck: Quackable) { duck.quack(); }",
+        "requiredLibraries": []
+      },
+      "performanceImpact": "none",
+      "migrationComplexity": "simple",
+      "notes": "Structural typing provides similar flexibility with type safety"
+    },
+    {
+      "pythonFeature": "Magic Methods (__str__, __repr__, etc)",
+      "category": "data-model",
+      "typeScriptSupport": "partial",
+      "constraints": [
+        "Limited magic method support",
+        "Must use specific method names"
+      ],
+      "implementation": {
+        "approach": "Use toString(), valueOf(), Symbol methods",
+        "codeExample": "class MyClass { toString() { return 'string representation'; } valueOf() { return 42; } }",
+        "requiredLibraries": []
+      },
+      "performanceImpact": "none",
+      "migrationComplexity": "moderate",
+      "notes": "Only subset of Python magic methods have equivalents"
+    },
+    {
+      "pythonFeature": "Global Interpreter Lock (GIL)",
+      "category": "language",
+      "typeScriptSupport": "native",
+      "constraints": [],
+      "implementation": {
+        "approach": "No GIL in JavaScript/TypeScript",
+        "codeExample": "// True parallelism with Worker threads",
+        "requiredLibraries": []
+      },
+      "performanceImpact": "none",
+      "migrationComplexity": "trivial",
+      "notes": "JavaScript uses event loop, no GIL limitations"
+    },
+    {
+      "pythonFeature": "Named Tuples",
+      "category": "data-model",
+      "typeScriptSupport": "workaround",
+      "constraints": [
+        "No built-in named tuple support",
+        "Use objects or classes instead"
+      ],
+      "implementation": {
+        "approach": "Use interfaces or readonly objects",
+        "codeExample": "interface Point { readonly x: number; readonly y: number; }",
+        "requiredLibraries": []
+      },
+      "performanceImpact": "none",
+      "migrationComplexity": "simple",
+      "notes": "Objects provide better type safety than tuples"
+    }
+  ]
+}
